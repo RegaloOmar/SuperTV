@@ -59,20 +59,4 @@ struct AppFeatureTests {
             $0.player = nil
         }
     }
-
-    @Test("el botón de cerrar del reproductor descarta la presentación")
-    func closeButtonDismissesPlayer() async {
-        var initial = AppFeature.State()
-        initial.player = PlayerFeature.State(channel: channel, account: account)
-
-        let store = TestStore(initialState: initial) {
-            AppFeature()
-        }
-        store.exhaustivity = .off(showSkippedAssertions: false)
-
-        await store.send(.player(.presented(.closeButtonTapped)))
-        await store.receive(\.player.dismiss) {
-            $0.player = nil
-        }
-    }
 }

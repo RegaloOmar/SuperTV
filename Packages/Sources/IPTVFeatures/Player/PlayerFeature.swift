@@ -42,13 +42,11 @@ public struct PlayerFeature {
         case playPauseTapped
         case retryTapped
         case reconnect
-        case closeButtonTapped
     }
 
     @Dependency(\.playableStreamProvider) var streamProvider
     @Dependency(\.playerEngine) var engine
     @Dependency(\.continuousClock) var clock
-    @Dependency(\.dismiss) var dismiss
 
     public init() {}
 
@@ -95,10 +93,6 @@ public struct PlayerFeature {
 
             case .reconnect:
                 return startPlayback(state: &state, isReconnect: true)
-
-            case .closeButtonTapped:
-                // Cierra la presentación; el padre para el motor al recibir `.dismiss`.
-                return .run { [dismiss] _ in await dismiss() }
             }
         }
     }

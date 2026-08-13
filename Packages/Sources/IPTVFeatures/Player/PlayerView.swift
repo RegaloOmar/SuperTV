@@ -16,38 +16,22 @@ public struct PlayerView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack {
             Color.black.ignoresSafeArea()
 
             // Presentado a pantalla completa (fullScreenCover): AVKit ocupa toda la
-            // pantalla y gestiona sus controles y la rotación de forma nativa.
+            // pantalla y gestiona sus controles nativos (incluida la X de cierre) y la
+            // rotación. Al cerrar con la X nativa, el cover se descarta y AppFeature
+            // para el motor (`.player(.dismiss)`).
             VideoSurface(player: engine.avPlayer)
                 .ignoresSafeArea()
 
             overlay
-
-            closeButton
         }
         #if os(iOS)
         .statusBarHidden(true)
         #endif
-        // Parar el motor al cerrar se gestiona en AppFeature (al recibir `.dismiss`).
         .task { await store.send(.task).finish() }
-    }
-
-    private var closeButton: some View {
-        Button {
-            store.send(.closeButtonTapped)
-        } label: {
-            Image(systemName: "xmark")
-                .font(.headline.weight(.bold))
-                .foregroundStyle(.white)
-                .padding(DesignTokens.Spacing.sm + 2)
-                .background(.black.opacity(0.45), in: Circle())
-        }
-        .padding(.leading, DesignTokens.Spacing.md)
-        .padding(.top, DesignTokens.Spacing.md)
-        .accessibilityLabel("Cerrar")
     }
 
     @ViewBuilder
