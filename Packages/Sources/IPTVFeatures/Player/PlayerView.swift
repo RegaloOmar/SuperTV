@@ -31,8 +31,9 @@ public struct PlayerView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        // Parar el motor al salir se gestiona en AppFeature (popFrom), que es fiable
+        // y NO se dispara al entrar en pantalla completa ni al re-renderizar la vista.
         .task { await store.send(.task).finish() }
-        .onDisappear { store.send(.onDisappear) }
     }
 
     @ViewBuilder
@@ -83,10 +84,9 @@ private struct VideoSurface: UIViewControllerRepresentable {
         }
     }
 
-    static func dismantleUIViewController(_ controller: AVPlayerViewController, coordinator: ()) {
-        // Suelta el player compartido al salir de la pantalla (evita retención).
-        controller.player = nil
-    }
+    // OJO: no hacer `controller.player = nil` en dismantle. SwiftUI desmonta/re-crea
+    // esta vista al cambiar de estado o al entrar en pantalla completa, y eso cortaba
+    // el stream/audio. El motor es compartido y lo para AppFeature al salir de verdad.
 }
 #else
 private struct VideoSurface: View {

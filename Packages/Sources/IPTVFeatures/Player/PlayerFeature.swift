@@ -62,6 +62,9 @@ public struct PlayerFeature {
         Reduce { state, action in
             switch action {
             case .task:
+                // Solo arranca una vez; si la vista se re-crea (p. ej. al volver de
+                // pantalla completa) no reinicia el stream que ya está en curso.
+                guard state.playback == .idle else { return .none }
                 state.retryCount = 0
                 return startPlayback(state: &state, isReconnect: false)
 
