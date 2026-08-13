@@ -16,39 +16,23 @@ public struct PlayerView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack {
             Color.black.ignoresSafeArea()
 
-            // El vídeo ocupa toda la pantalla: los controles nativos (AirPlay, PiP,
-            // pantalla completa) se ubican correctamente sin barra de navegación encima.
+            // El vídeo va DENTRO del área segura (por debajo de la barra de navegación),
+            // así los controles nativos (AirPlay, PiP, pantalla completa) no chocan con
+            // el botón "atrás". Para inmersión total, el botón de pantalla completa del
+            // propio reproductor lleva a fullscreen nativo.
             VideoSurface(player: engine.avPlayer)
-                .ignoresSafeArea()
 
             overlay
-
-            closeButton
         }
+        .navigationTitle(store.channel.name)
         #if os(iOS)
-        .toolbar(.hidden, for: .navigationBar)
-        .statusBarHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
         #endif
         .task { await store.send(.task).finish() }
         .onDisappear { store.send(.onDisappear) }
-    }
-
-    private var closeButton: some View {
-        Button {
-            store.send(.closeButtonTapped)
-        } label: {
-            Image(systemName: "xmark")
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(.white)
-                .padding(DesignTokens.Spacing.sm + 2)
-                .background(.black.opacity(0.5), in: Circle())
-        }
-        .padding(.leading, DesignTokens.Spacing.md)
-        .padding(.top, DesignTokens.Spacing.sm)
-        .accessibilityLabel("Cerrar reproductor")
     }
 
     @ViewBuilder

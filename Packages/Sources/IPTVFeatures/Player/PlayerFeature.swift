@@ -43,7 +43,6 @@ public struct PlayerFeature {
         case playPauseTapped
         case retryTapped
         case reconnect
-        case closeButtonTapped
         case delegate(Delegate)
 
         public enum Delegate: Equatable {
@@ -71,9 +70,6 @@ public struct PlayerFeature {
                     .cancel(id: CancelID.session),
                     .run { [engine] _ in engine.stop() }
                 )
-
-            case .closeButtonTapped:
-                return .send(.delegate(.dismiss))
 
             case let .playbackStateChanged(newState):
                 state.playback = newState
