@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import IPTVCore
+import IPTVPlayerKit
 
 /// Reducer raíz de la app. Posee la sesión, la feature de Auth, el listado raíz de
 /// categorías tras login, y la pila de navegación (`StackState`).
@@ -39,6 +40,7 @@ public struct AppFeature {
     }
 
     @Dependency(\.credentialStore) var credentialStore
+    @Dependency(\.playerEngine) var playerEngine
 
     public init() {}
 
@@ -77,6 +79,14 @@ public struct AppFeature {
 
             case let .path(.element(id: id, action: .player(.delegate(.dismiss)))):
                 state.path.pop(from: id)
+                return stopPlayer()
+
+            // Al salir del reproductor (atrás / swipe), parar el audio desde el padre:
+            // el `onDisappear` de la vista no es fiable cuando el store se está desmontando.
+            case let .path(.popFrom(id: id)):
+                if case .player = state.path[id: id] {
+                    return stopPlayer()
+                }
                 return .none
 
             case .path(.element(id: _, action: .settings(.delegate(.logoutRequested)))):
@@ -97,7 +107,14 @@ public struct AppFeature {
         state.channelList = nil
         state.auth = AuthFeature.State()
         state.path.removeAll()
-        return .run { [credentialStore] _ in try? credentialStore.delete() }
+        return .merge(
+            stopPlayer(),
+            .run { [credentialStore] _ in try? credentialStore.delete() }
+        )
+    }
+
+    private func stopPlayer() -> Effect<Action> {
+        .run { [playerEngine] _ in playerEngine.stop() }
     }
 }
 

@@ -16,20 +16,39 @@ public struct PlayerView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             Color.black.ignoresSafeArea()
 
+            // El vídeo ocupa toda la pantalla: los controles nativos (AirPlay, PiP,
+            // pantalla completa) se ubican correctamente sin barra de navegación encima.
             VideoSurface(player: engine.avPlayer)
                 .ignoresSafeArea()
 
             overlay
+
+            closeButton
         }
-        .navigationTitle(store.channel.name)
         #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
+        .statusBarHidden(true)
         #endif
         .task { await store.send(.task).finish() }
         .onDisappear { store.send(.onDisappear) }
+    }
+
+    private var closeButton: some View {
+        Button {
+            store.send(.closeButtonTapped)
+        } label: {
+            Image(systemName: "xmark")
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(.white)
+                .padding(DesignTokens.Spacing.sm + 2)
+                .background(.black.opacity(0.5), in: Circle())
+        }
+        .padding(.leading, DesignTokens.Spacing.md)
+        .padding(.top, DesignTokens.Spacing.sm)
+        .accessibilityLabel("Cerrar reproductor")
     }
 
     @ViewBuilder
@@ -54,7 +73,7 @@ public struct PlayerView: View {
                 }
             }
             .padding(DesignTokens.Spacing.xl)
-            .background(.black.opacity(0.4), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
