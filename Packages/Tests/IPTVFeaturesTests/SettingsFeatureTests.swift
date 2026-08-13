@@ -15,12 +15,14 @@ struct SettingsFeatureTests {
         maxConnections: 2
     )
 
-    @Test("limpiar caché muestra progreso y confirma")
+    @Test("limpiar caché borra logos y catálogo, muestra progreso y confirma")
     func clearsCache() async {
+        let logosCleared = LockIsolated(false)
         let store = TestStore(initialState: SettingsFeature.State(account: .demo, status: status)) {
             SettingsFeature()
         } withDependencies: {
             $0.channelRepository = MockChannelRepository()
+            $0.imageCache = ImageCacheClient(clear: { logosCleared.setValue(true) })
         }
 
         await store.send(.clearCacheTapped) {
@@ -31,6 +33,7 @@ struct SettingsFeatureTests {
             $0.isClearingCache = false
             $0.cacheCleared = true
         }
+        #expect(logosCleared.value)  // también se limpió la caché de logos
     }
 
     @Test("cerrar sesión delega al padre")

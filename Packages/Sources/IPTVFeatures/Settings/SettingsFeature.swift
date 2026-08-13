@@ -30,6 +30,7 @@ public struct SettingsFeature {
     }
 
     @Dependency(\.channelRepository) var repository
+    @Dependency(\.imageCache) var imageCache
 
     public init() {}
 
@@ -39,8 +40,9 @@ public struct SettingsFeature {
             case .clearCacheTapped:
                 state.isClearingCache = true
                 state.cacheCleared = false
-                return .run { [repository] send in
-                    try? await repository.clearCache()
+                return .run { [repository, imageCache] send in
+                    imageCache.clear()                 // logos (memoria + disco)
+                    try? await repository.clearCache()  // catálogo (SwiftData)
                     await send(.cacheCleared)
                 }
 

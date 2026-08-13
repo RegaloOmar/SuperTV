@@ -64,6 +64,13 @@ public final class ImageCache: @unchecked Sendable {
         return image
     }
 
+    /// Vacía la caché: memoria (NSCache) + carpeta de logos en disco.
+    public func clear() {
+        memory.removeAllObjects()
+        try? FileManager.default.removeItem(at: directory)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    }
+
     /// Nombre de archivo estable y seguro derivado de la URL (hash SHA-256).
     private func fileURL(for url: URL) -> URL {
         let digest = SHA256.hash(data: Data(url.absoluteString.utf8))
