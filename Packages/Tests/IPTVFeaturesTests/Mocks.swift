@@ -3,10 +3,12 @@ import AVFoundation
 import IPTVCore
 import IPTVPlayerKit
 
-/// Proveedor de stream de prueba (siempre resuelve una URL fija).
+/// Proveedor de stream de prueba: resuelve una URL fija, o lanza si `error != nil`.
 struct MockStreamProvider: PlayableStreamProviding {
+    var error: IPTVError?
     func stream(for channel: Channel, account: IPTVAccount) throws -> LiveStream {
-        LiveStream(channelID: channel.id, url: URL(string: "http://demo.tv/stream.m3u8")!, container: .hls)
+        if let error { throw error }
+        return LiveStream(channelID: channel.id, url: URL(string: "http://demo.tv/stream.m3u8")!, container: .hls)
     }
 }
 

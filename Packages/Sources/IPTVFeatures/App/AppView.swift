@@ -41,10 +41,10 @@ public struct SuperTVRootView: View {
                 status: AccountStatus(state: .active, expiresAt: nil, isTrial: false, activeConnections: 1, maxConnections: 1)
             )
             state.channelList = ChannelListFeature.State(account: account)
-            state.path.append(.player(PlayerFeature.State(
+            state.player = PlayerFeature.State(
                 channel: Channel(id: 999, name: "Demo HLS", categoryID: "0"),
                 account: account
-            )))
+            )
         }
         #endif
         self.demoAutoConnect = autoConnect
@@ -101,11 +101,16 @@ public struct AppView: View {
             switch store.case {
             case .channels(let store):
                 ChannelsView(store: store)
-            case .player(let store):
-                PlayerView(store: store)
             case .settings(let store):
                 SettingsView(store: store)
             }
         }
+        #if os(iOS)
+        // El reproductor se presenta a pantalla completa (solo iOS; en macOS el paquete
+        // solo se compila para los tests, que no presentan UI).
+        .fullScreenCover(item: $store.scope(state: \.player, action: \.player)) { playerStore in
+            PlayerView(store: playerStore)
+        }
+        #endif
     }
 }

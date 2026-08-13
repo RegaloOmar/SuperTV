@@ -38,21 +38,17 @@ public struct PlayerFeature {
 
     public enum Action {
         case task
-        case onDisappear
         case playbackStateChanged(PlaybackState)
         case playPauseTapped
         case retryTapped
         case reconnect
-        case delegate(Delegate)
-
-        public enum Delegate: Equatable {
-            case dismiss
-        }
+        case closeButtonTapped
     }
 
     @Dependency(\.playableStreamProvider) var streamProvider
     @Dependency(\.playerEngine) var engine
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.dismiss) var dismiss
 
     public init() {}
 
@@ -67,12 +63,6 @@ public struct PlayerFeature {
                 guard state.playback == .idle else { return .none }
                 state.retryCount = 0
                 return startPlayback(state: &state, isReconnect: false)
-
-            case .onDisappear:
-                return .merge(
-                    .cancel(id: CancelID.session),
-                    .run { [engine] _ in engine.stop() }
-                )
 
             case let .playbackStateChanged(newState):
                 state.playback = newState
@@ -106,8 +96,9 @@ public struct PlayerFeature {
             case .reconnect:
                 return startPlayback(state: &state, isReconnect: true)
 
-            case .delegate:
-                return .none
+            case .closeButtonTapped:
+                // Cierra la presentación; el padre para el motor al recibir `.dismiss`.
+                return .run { [dismiss] _ in await dismiss() }
             }
         }
     }

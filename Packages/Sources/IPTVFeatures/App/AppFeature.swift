@@ -16,6 +16,8 @@ public struct AppFeature {
         public var channelList: ChannelListFeature.State?
         /// Pila de navegación.
         public var path = StackState<Path.State>()
+        /// Reproductor presentado a pantalla completa (fuera del stack de navegación).
+        @Presents public var player: PlayerFeature.State?
 
         public init() {}
 
@@ -29,13 +31,14 @@ public struct AppFeature {
         case auth(AuthFeature.Action)
         case channelList(ChannelListFeature.Action)
         case path(StackActionOf<Path>)
+        case player(PresentationAction<PlayerFeature.Action>)
     }
 
-    /// Destinos navegables.
+    /// Destinos navegables (push). El reproductor NO va aquí: se presenta a pantalla
+    /// completa para que AVKit gestione controles/rotación de forma nativa.
     @Reducer
     public enum Path {
         case channels(ChannelsFeature)
-        case player(PlayerFeature)
         case settings(SettingsFeature)
     }
 
@@ -72,23 +75,19 @@ public struct AppFeature {
             case .channelList:
                 return .none
 
-            // MARK: Navegación
+            // MARK: Reproductor (presentación a pantalla completa)
             case let .path(.element(id: _, action: .channels(.delegate(.channelSelected(channel, account))))):
-                state.path.append(.player(PlayerFeature.State(channel: channel, account: account)))
+                state.player = PlayerFeature.State(channel: channel, account: account)
                 return .none
 
-            case let .path(.element(id: id, action: .player(.delegate(.dismiss)))):
-                state.path.pop(from: id)
+            // Al cerrarse el reproductor (Done/deslizar/close), parar el motor desde el padre.
+            case .player(.dismiss):
                 return stopPlayer()
 
-            // Al salir del reproductor (atrás / swipe), parar el audio desde el padre:
-            // el `onDisappear` de la vista no es fiable cuando el store se está desmontando.
-            case let .path(.popFrom(id: id)):
-                if case .player = state.path[id: id] {
-                    return stopPlayer()
-                }
+            case .player:
                 return .none
 
+            // MARK: Navegación
             case .path(.element(id: _, action: .settings(.delegate(.logoutRequested)))):
                 return logout(state: &state)
 
@@ -99,6 +98,9 @@ public struct AppFeature {
         .ifLet(\.channelList, action: \.channelList) {
             ChannelListFeature()
         }
+        .ifLet(\.$player, action: \.player) {
+            PlayerFeature()
+        }
         .forEach(\.path, action: \.path)
     }
 
@@ -107,6 +109,7 @@ public struct AppFeature {
         state.channelList = nil
         state.auth = AuthFeature.State()
         state.path.removeAll()
+        state.player = nil
         return .merge(
             stopPlayer(),
             .run { [credentialStore] _ in try? credentialStore.delete() }

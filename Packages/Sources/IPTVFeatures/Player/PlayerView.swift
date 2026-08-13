@@ -16,24 +16,38 @@ public struct PlayerView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             Color.black.ignoresSafeArea()
 
-            // El vídeo va DENTRO del área segura (por debajo de la barra de navegación),
-            // así los controles nativos (AirPlay, PiP, pantalla completa) no chocan con
-            // el botón "atrás". Para inmersión total, el botón de pantalla completa del
-            // propio reproductor lleva a fullscreen nativo.
+            // Presentado a pantalla completa (fullScreenCover): AVKit ocupa toda la
+            // pantalla y gestiona sus controles y la rotación de forma nativa.
             VideoSurface(player: engine.avPlayer)
+                .ignoresSafeArea()
 
             overlay
+
+            closeButton
         }
-        .navigationTitle(store.channel.name)
         #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
+        .statusBarHidden(true)
         #endif
-        // Parar el motor al salir se gestiona en AppFeature (popFrom), que es fiable
-        // y NO se dispara al entrar en pantalla completa ni al re-renderizar la vista.
+        // Parar el motor al cerrar se gestiona en AppFeature (al recibir `.dismiss`).
         .task { await store.send(.task).finish() }
+    }
+
+    private var closeButton: some View {
+        Button {
+            store.send(.closeButtonTapped)
+        } label: {
+            Image(systemName: "xmark")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(.white)
+                .padding(DesignTokens.Spacing.sm + 2)
+                .background(.black.opacity(0.45), in: Circle())
+        }
+        .padding(.leading, DesignTokens.Spacing.md)
+        .padding(.top, DesignTokens.Spacing.md)
+        .accessibilityLabel("Cerrar")
     }
 
     @ViewBuilder
