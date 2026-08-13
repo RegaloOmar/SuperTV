@@ -66,7 +66,6 @@ public struct AuthView: View {
         }
         .navigationTitle("SuperTV")
         .disabled(store.isLoading)
-        .onAppear { store.send(.onAppear) }
     }
 }
 

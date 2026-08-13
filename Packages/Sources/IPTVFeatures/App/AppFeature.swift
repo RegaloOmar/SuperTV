@@ -8,6 +8,9 @@ import IPTVPlayerKit
 public struct AppFeature {
     @ObservableState
     public struct State: Equatable {
+        /// `true` mientras se decide (al arrancar) si hay sesión guardada. Muestra
+        /// el splash, evitando el parpadeo del login antes de restaurar la sesión.
+        public var isLaunching = true
         /// Sesión activa; `nil` mientras no haya login válido.
         public var session: Session?
         /// Autenticación (pantalla inicial cuando no hay sesión).
@@ -28,10 +31,19 @@ public struct AppFeature {
     }
 
     public enum Action {
+        case onLaunch
+        case restoreFinished(RestoreOutcome)
         case auth(AuthFeature.Action)
         case channelList(ChannelListFeature.Action)
         case path(StackActionOf<Path>)
         case player(PresentationAction<PlayerFeature.Action>)
+    }
+
+    /// Resultado de intentar restaurar la sesión al arrancar.
+    public enum RestoreOutcome: Equatable {
+        case authenticated(IPTVAccount, AccountStatus)
+        /// No hay sesión válida; ir al login (con prefill si había credenciales guardadas).
+        case needsLogin(prefill: IPTVAccount?)
     }
 
     /// Destinos navegables (push). El reproductor NO va aquí: se presenta a pantalla
@@ -43,6 +55,7 @@ public struct AppFeature {
     }
 
     @Dependency(\.credentialStore) var credentialStore
+    @Dependency(\.iptvProvider) var provider
     @Dependency(\.playerEngine) var playerEngine
 
     public init() {}
@@ -53,6 +66,40 @@ public struct AppFeature {
         }
         Reduce { state, action in
             switch action {
+            // MARK: Arranque (restaurar sesión desde Keychain sin parpadeo de login)
+            case .onLaunch:
+                // Si un hook de demo ya fijó el estado, no restaurar.
+                guard state.isLaunching else { return .none }
+                return .run { [credentialStore, provider] send in
+                    guard let account = try? credentialStore.load() else {
+                        await send(.restoreFinished(.needsLogin(prefill: nil)))
+                        return
+                    }
+                    do {
+                        let status = try await provider.authenticate(account)
+                        await send(.restoreFinished(.authenticated(account, status)))
+                    } catch {
+                        // Había credenciales pero el re-login falló (red/expirada):
+                        // ir al login con los campos rellenos para reintentar.
+                        await send(.restoreFinished(.needsLogin(prefill: account)))
+                    }
+                }
+
+            case let .restoreFinished(outcome):
+                state.isLaunching = false
+                switch outcome {
+                case let .authenticated(account, status):
+                    state.session = .init(account: account, status: status)
+                    state.channelList = ChannelListFeature.State(account: account)
+                case let .needsLogin(prefill):
+                    if let account = prefill {
+                        state.auth.host = account.host.absoluteString
+                        state.auth.username = account.username
+                        state.auth.password = account.password
+                    }
+                }
+                return .none
+
             // MARK: Auth
             case let .auth(.delegate(.authenticated(account, status))):
                 state.session = .init(account: account, status: status)

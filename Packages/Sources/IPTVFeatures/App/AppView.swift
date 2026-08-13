@@ -63,6 +63,11 @@ public struct SuperTVRootView: View {
                 category: ChannelCategory(id: "1", name: "Deportes")
             )))
         }
+
+        // Con cualquier hook de demo, saltar el splash de arranque.
+        if args.contains(where: { $0.hasPrefix("-demo") }) {
+            state.isLaunching = false
+        }
         #endif
         self.demoAutoConnect = autoConnect
 
@@ -131,11 +136,16 @@ public struct AppView: View {
 
     public var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            if let channelListStore = store.scope(state: \.channelList, action: \.channelList) {
-                ChannelListView(store: channelListStore)
-            } else {
-                AuthView(store: store.scope(state: \.auth, action: \.auth))
+            Group {
+                if store.isLaunching {
+                    SplashView()
+                } else if let channelListStore = store.scope(state: \.channelList, action: \.channelList) {
+                    ChannelListView(store: channelListStore)
+                } else {
+                    AuthView(store: store.scope(state: \.auth, action: \.auth))
+                }
             }
+            .task { store.send(.onLaunch) }
         } destination: { store in
             switch store.case {
             case .channels(let store):

@@ -24,6 +24,24 @@ final class MockPlayerEngine: PlayerEngine, @unchecked Sendable {
     func setVolume(_ volume: Float) {}
 }
 
+/// Proveedor IPTV de prueba con un resultado de autenticación fijo.
+struct MockIPTVProvider: IPTVProviderProtocol {
+    var authResult: Result<AccountStatus, IPTVError> = .success(.demoActive)
+    func authenticate(_ account: IPTVAccount) async throws -> AccountStatus { try authResult.get() }
+    func liveCategories(for account: IPTVAccount) async throws -> [ChannelCategory] { [] }
+    func liveStreams(for account: IPTVAccount, categoryID: String?) async throws -> [Channel] { [] }
+}
+
+extension AccountStatus {
+    static let demoActive = AccountStatus(
+        state: .active,
+        expiresAt: Date(timeIntervalSince1970: 2_000_000_000),
+        isTrial: false,
+        activeConnections: 1,
+        maxConnections: 2
+    )
+}
+
 /// Repositorio de catálogo de prueba con resultados fijos.
 struct MockChannelRepository: ChannelRepositoryProtocol {
     var categoriesResult: Result<[ChannelCategory], IPTVError> = .success([])

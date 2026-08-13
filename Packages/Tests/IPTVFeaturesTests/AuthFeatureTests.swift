@@ -75,24 +75,4 @@ struct AuthFeatureTests {
 
         #expect((try? cred.load()) == nil)
     }
-
-    @Test("al arrancar restaura la sesión de Keychain e intenta re-login")
-    func restoresSessionOnAppear() async {
-        let store = TestStore(initialState: AuthFeature.State()) {
-            AuthFeature()
-        } withDependencies: {
-            $0.credentialStore = InMemoryCredentialStore(testAccount)
-            $0.iptvProvider = MockProvider(authResult: .success(activeStatus))
-        }
-
-        await store.send(.onAppear)
-        await store.receive(\.restored) {
-            $0.host = testAccount.host.absoluteString
-            $0.username = testAccount.username
-            $0.password = testAccount.password
-            $0.isLoading = true
-        }
-        await store.receive(\.authResponse) { $0.isLoading = false }
-        await store.receive(\.delegate)
-    }
 }

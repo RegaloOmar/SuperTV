@@ -37,8 +37,6 @@ public struct AuthFeature {
 
     public enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
-        case onAppear
-        case restored(IPTVAccount?)
         case loginButtonTapped
         case authResponse(Result<AccountStatus, IPTVError>, account: IPTVAccount)
         case delegate(Delegate)
@@ -61,19 +59,6 @@ public struct AuthFeature {
             case .binding:
                 state.errorMessage = nil
                 return .none
-
-            case .onAppear:
-                return .run { [credentialStore] send in
-                    await send(.restored(try? credentialStore.load()))
-                }
-
-            case let .restored(account):
-                guard let account else { return .none }
-                // Prefill visible + intento de re-login automático.
-                state.host = account.host.absoluteString
-                state.username = account.username
-                state.password = account.password
-                return authenticate(account, state: &state)
 
             case .loginButtonTapped:
                 guard let url = state.normalizedHostURL else {
