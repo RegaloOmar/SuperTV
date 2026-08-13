@@ -28,7 +28,7 @@ public final class AVPlayerEngine: PlayerEngine, @unchecked Sendable {
     private func activateAudioSession() {
         #if os(iOS)
         let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .moviePlayback)
+        try? session.setCategory(.playback)
         try? session.setActive(true)
         #endif
     }
@@ -81,6 +81,18 @@ public final class AVPlayerEngine: PlayerEngine, @unchecked Sendable {
     public func play() {
         avPlayer.play()
         updateNowPlaying()
+        logAudioState("play")
+    }
+
+    private func logAudioState(_ context: String) {
+        #if DEBUG && os(iOS)
+        let session = AVAudioSession.sharedInstance()
+        print("""
+        [AUDIO/\(context)] category=\(session.category.rawValue) mode=\(session.mode.rawValue) \
+        otherAudio=\(session.isOtherAudioPlaying) outputs=\(session.currentRoute.outputs.map(\.portType.rawValue)) \
+        isMuted=\(avPlayer.isMuted) volume=\(avPlayer.volume) rate=\(avPlayer.rate)
+        """)
+        #endif
     }
 
     public func pause() {

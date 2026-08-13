@@ -1,5 +1,6 @@
 import SwiftUI
 import ComposableArchitecture
+import Dependencies
 import IPTVCore
 
 /// Punto de entrada público de la UI. El app target (Xcode) solo conoce esto:
@@ -17,9 +18,11 @@ public struct SuperTVRootView: View {
 
         var state = AppFeature.State()
         var autoConnect = false
+        var demoStreamURL: URL?
         #if DEBUG
         // Hook de DEBUG para demos / UI tests: rellena el login vía launch arguments.
         // p. ej. `-demoHost demo.tv:8080 -demoUser user -demoPass pass -demoAutoConnect`.
+        // `-demoPlayHLS <url>` arranca directo en el reproductor con un stream de prueba.
         let args = ProcessInfo.processInfo.arguments
         func value(after flag: String) -> String? {
             guard let i = args.firstIndex(of: flag), i + 1 < args.count else { return nil }
@@ -29,8 +32,33 @@ public struct SuperTVRootView: View {
         if let user = value(after: "-demoUser") { state.auth.username = user }
         if let pass = value(after: "-demoPass") { state.auth.password = pass }
         autoConnect = args.contains("-demoAutoConnect")
+
+        if let hls = value(after: "-demoPlayHLS"), let url = URL(string: hls) {
+            demoStreamURL = url
+            let account = IPTVAccount(host: URL(string: "http://demo.local")!, username: "demo", password: "demo")
+            state.session = .init(
+                account: account,
+                status: AccountStatus(state: .active, expiresAt: nil, isTrial: false, activeConnections: 1, maxConnections: 1)
+            )
+            state.channelList = ChannelListFeature.State(account: account)
+            state.path.append(.player(PlayerFeature.State(
+                channel: Channel(id: 999, name: "Demo HLS", categoryID: "0"),
+                account: account
+            )))
+        }
         #endif
         self.demoAutoConnect = autoConnect
+
+        #if DEBUG
+        if let url = demoStreamURL {
+            _store = State(initialValue: withDependencies {
+                $0.playableStreamProvider = DemoStreamProvider(url: url)
+            } operation: {
+                Store(initialState: state) { AppFeature() }
+            })
+            return
+        }
+        #endif
         _store = State(initialValue: Store(initialState: state) { AppFeature() })
     }
 
@@ -42,6 +70,16 @@ public struct SuperTVRootView: View {
             }
     }
 }
+
+#if DEBUG
+/// Proveedor de prueba que resuelve cualquier canal a una URL HLS fija (para `-demoPlayHLS`).
+private struct DemoStreamProvider: PlayableStreamProviding {
+    let url: URL
+    func stream(for channel: Channel, account: IPTVAccount) throws -> LiveStream {
+        LiveStream(channelID: channel.id, url: url, container: .hls)
+    }
+}
+#endif
 
 /// Vista raíz. Enruta entre login y categorías según haya sesión, dentro de un
 /// `NavigationStack` dirigido por `StackState`.
