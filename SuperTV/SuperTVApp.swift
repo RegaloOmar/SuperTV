@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import IPTVFeatures
 
 @main
 struct SuperTVApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // App target delgado: toda la lógica y navegación vive en IPTVFeatures.
+            SuperTVRootView()
         }
     }
 }

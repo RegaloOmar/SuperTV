@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Los paneles Xtream Codes sirven casi siempre por HTTP (no HTTPS) y el host lo
+	  introduce el usuario, así que no se puede predefinir una lista de dominios.
+	  Por eso se permite carga arbitraria. En Fase 5 (App Store) se justifica en las
+	  notas de review. Xcode fusiona estas claves con las autogeneradas.
+	-->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<!-- Necesario para audio en segundo plano, Control Center (NowPlaying) y PiP. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+</dict>
+</plist>
