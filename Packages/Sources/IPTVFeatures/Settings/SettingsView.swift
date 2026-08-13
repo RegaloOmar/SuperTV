@@ -79,7 +79,8 @@ public struct SettingsView: View {
         } label: {
             HStack {
                 Text("Limpiar caché")
-                    .foregroundStyle(DesignTokens.Palette.textPrimary)
+                    .fontWeight(.bold)
+                    .foregroundStyle(DesignTokens.Palette.accent)
                 Spacer()
                 if store.isClearingCache {
                     ProgressView().tint(DesignTokens.Palette.accent)
