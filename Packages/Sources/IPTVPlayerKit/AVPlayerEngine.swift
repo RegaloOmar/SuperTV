@@ -18,13 +18,19 @@ public final class AVPlayerEngine: PlayerEngine, @unchecked Sendable {
     private var currentTitle = ""
 
     public init() {
+        activateAudioSession()
+        avPlayer.automaticallyWaitsToMinimizeStalling = true
+    }
+
+    /// Categoría `.playback`: reproduce aunque el interruptor de silencio esté activo,
+    /// permite audio en segundo plano y Control Center. Se activa en cada carga por si
+    /// otra parte del sistema (o AVPlayerViewController) cambió la sesión.
+    private func activateAudioSession() {
         #if os(iOS)
-        // Reproducción en segundo plano / Control Center.
         let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback)
+        try? session.setCategory(.playback, mode: .moviePlayback)
         try? session.setActive(true)
         #endif
-        avPlayer.automaticallyWaitsToMinimizeStalling = true
     }
 
     private func yield(_ state: PlaybackState) {
@@ -43,6 +49,9 @@ public final class AVPlayerEngine: PlayerEngine, @unchecked Sendable {
 
     public func load(_ stream: LiveStream, title: String) {
         currentTitle = title
+        activateAudioSession()
+        avPlayer.isMuted = false
+        avPlayer.volume = 1.0
         yield(.loading)
 
         let item = AVPlayerItem(url: stream.url)

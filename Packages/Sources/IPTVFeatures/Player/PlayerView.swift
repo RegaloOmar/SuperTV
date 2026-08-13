@@ -69,9 +69,12 @@ public struct PlayerView: View {
 private struct VideoSurface: UIViewControllerRepresentable {
     let player: AVPlayer
 
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
     func makeUIViewController(context: Context) -> AVPlayerViewController {
         let controller = AVPlayerViewController()
         controller.player = player
+        controller.delegate = context.coordinator
         controller.allowsPictureInPicturePlayback = true
         controller.canStartPictureInPictureAutomaticallyFromInline = true
         controller.videoGravity = .resizeAspect
@@ -87,6 +90,19 @@ private struct VideoSurface: UIViewControllerRepresentable {
     // OJO: no hacer `controller.player = nil` en dismantle. SwiftUI desmonta/re-crea
     // esta vista al cambiar de estado o al entrar en pantalla completa, y eso cortaba
     // el stream/audio. El motor es compartido y lo para AppFeature al salir de verdad.
+
+    final class Coordinator: NSObject, AVPlayerViewControllerDelegate {
+        // Al volver de pantalla completa a incrustado, el sistema a veces pausa;
+        // reanudamos al terminar la transición para que el stream no se corte.
+        func playerViewController(
+            _ playerViewController: AVPlayerViewController,
+            willEndFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
+        ) {
+            coordinator.animate(alongsideTransition: nil) { _ in
+                playerViewController.player?.play()
+            }
+        }
+    }
 }
 #else
 private struct VideoSurface: View {
