@@ -58,10 +58,14 @@ public struct SuperTVRootView: View {
                 status: AccountStatus(state: .active, expiresAt: nil, isTrial: false, activeConnections: 1, maxConnections: 2)
             )
             state.channelList = ChannelListFeature.State(account: account)
-            state.path.append(.channels(ChannelsFeature.State(
-                account: account,
-                category: ChannelCategory(id: "1", name: "Deportes")
-            )))
+            // Con `-demoCatalogChannels` salta directo a los canales; si no, se queda
+            // en la lista de categorías.
+            if args.contains("-demoCatalogChannels") {
+                state.path.append(.channels(ChannelsFeature.State(
+                    account: account,
+                    category: ChannelCategory(id: "1", name: "Deportes")
+                )))
+            }
         }
 
         // Con cualquier hook de demo, saltar el splash de arranque.
@@ -107,7 +111,15 @@ private struct DemoStreamProvider: PlayableStreamProviding {
 /// Catálogo de prueba para visualizar el diseño (para `-demoCatalog`).
 private struct DemoCatalogRepository: ChannelRepositoryProtocol {
     func categories(for account: IPTVAccount, forceRefresh: Bool) async throws -> [ChannelCategory] {
-        [ChannelCategory(id: "1", name: "Deportes", displayOrder: 0)]
+        [
+            ChannelCategory(id: "1", name: "Deportes", displayOrder: 0),
+            ChannelCategory(id: "2", name: "Noticias", displayOrder: 1),
+            ChannelCategory(id: "3", name: "Películas", displayOrder: 2),
+            ChannelCategory(id: "4", name: "Series", displayOrder: 3),
+            ChannelCategory(id: "5", name: "Infantil", displayOrder: 4),
+            ChannelCategory(id: "6", name: "Documentales", displayOrder: 5),
+            ChannelCategory(id: "7", name: "Música", displayOrder: 6),
+        ]
     }
     func channels(for account: IPTVAccount, categoryID: String?, forceRefresh: Bool) async throws -> [Channel] {
         [

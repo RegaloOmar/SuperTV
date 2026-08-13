@@ -3,8 +3,8 @@ import ComposableArchitecture
 import IPTVCore
 import IPTVDesignSystem
 
-/// Pantalla de categorías. La navegación real la ejecuta el padre (StackState)
-/// al recibir el delegate `categorySelected`.
+/// Pantalla de categorías. Estética SuperTV: negro + oro rosa. La navegación real la
+/// ejecuta el padre (StackState) al recibir el delegate `categorySelected`.
 public struct ChannelListView: View {
     @Bindable var store: StoreOf<ChannelListFeature>
 
@@ -13,9 +13,13 @@ public struct ChannelListView: View {
     }
 
     public var body: some View {
-        Group {
+        ZStack {
+            DesignTokens.Palette.background.ignoresSafeArea()
+
             if store.isLoading && store.categories.isEmpty {
-                ProgressView("Cargando categorías…")
+                ProgressView()
+                    .controlSize(.large)
+                    .tint(DesignTokens.Palette.accent)
             } else if let errorMessage = store.errorMessage, store.categories.isEmpty {
                 StatusView(
                     systemImage: "wifi.exclamationmark",
@@ -31,6 +35,12 @@ public struct ChannelListView: View {
         .searchable(text: $store.searchText, prompt: "Buscar categoría")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
+                Button("Actualizar", systemImage: "arrow.clockwise") {
+                    store.send(.refresh)
+                }
+                .disabled(store.isLoading)
+            }
+            ToolbarItem(placement: .primaryAction) {
                 Button("Ajustes", systemImage: "gearshape") {
                     store.send(.settingsButtonTapped)
                 }
@@ -45,19 +55,17 @@ public struct ChannelListView: View {
                 Button {
                     store.send(.categoryTapped(category))
                 } label: {
-                    HStack {
-                        Text(category.name)
-                            .foregroundStyle(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.footnote.weight(.semibold))
-                            .foregroundStyle(.tertiary)
-                    }
-                    .contentShape(Rectangle())
+                    CategoryRow(name: category.name)
                 }
                 .buttonStyle(.plain)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 5, leading: DesignTokens.Spacing.md, bottom: 5, trailing: DesignTokens.Spacing.md))
+                .accessibilityHint("Toca para ver los canales")
             }
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
         .overlay {
             if store.filteredCategories.isEmpty {
                 StatusView(
@@ -68,5 +76,39 @@ public struct ChannelListView: View {
             }
         }
         .refreshable { await store.send(.refresh).finish() }
+    }
+}
+
+/// Fila de categoría: icono, nombre y chevron en oro rosa.
+private struct CategoryRow: View {
+    let name: String
+
+    var body: some View {
+        HStack(spacing: DesignTokens.Spacing.md) {
+            Image(systemName: "square.stack.3d.up.fill")
+                .font(.body)
+                .foregroundStyle(DesignTokens.Palette.accent)
+                .frame(width: 36, height: 36)
+                .background(DesignTokens.Palette.surfaceElevated, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.sm))
+
+            Text(name)
+                .font(.headline)
+                .foregroundStyle(DesignTokens.Palette.textPrimary)
+                .lineLimit(1)
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.bold))
+                .foregroundStyle(DesignTokens.Palette.accent)
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .background(DesignTokens.Palette.surface, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                .strokeBorder(DesignTokens.Palette.hairline, lineWidth: 1)
+        )
+        .contentShape(Rectangle())
     }
 }

@@ -33,19 +33,21 @@ public struct StatusView: View {
         VStack(spacing: DesignTokens.Spacing.md) {
             Image(systemName: systemImage)
                 .font(.largeTitle)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(DesignTokens.Palette.accent)
             Text(title)
                 .font(.headline)
+                .foregroundStyle(DesignTokens.Palette.textPrimary)
                 .multilineTextAlignment(.center)
             if let message {
                 Text(message)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(DesignTokens.Palette.textSecondary)
                     .multilineTextAlignment(.center)
             }
             if let action {
                 Button(action.title, action: action.handler)
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.superTVPrimary)
+                    .fixedSize(horizontal: true, vertical: false)
                     .padding(.top, DesignTokens.Spacing.sm)
             }
         }
