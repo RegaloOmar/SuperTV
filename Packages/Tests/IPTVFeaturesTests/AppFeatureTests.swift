@@ -72,8 +72,8 @@ struct AppFeatureTests {
         #expect(store.state.session == nil)
     }
 
-    @Test("seleccionar una categoría empuja la pantalla de canales")
-    func categorySelectionPushesChannels() async {
+    @Test("seleccionar una categoría abre sus canales (detalle)")
+    func categorySelectionOpensChannels() async {
         var initial = AppFeature.State()
         initial.channelList = ChannelListFeature.State(account: account)
 
@@ -83,23 +83,58 @@ struct AppFeatureTests {
         store.exhaustivity = .off(showSkippedAssertions: false)
 
         await store.send(.channelList(.delegate(.categorySelected(category, account: account)))) {
-            $0.path.append(.channels(ChannelsFeature.State(account: self.account, category: self.category)))
+            $0.channels = ChannelsFeature.State(account: self.account, category: self.category)
         }
     }
 
-    @Test("seleccionar un canal presenta el reproductor a pantalla completa")
-    func channelSelectionPresentsPlayer() async {
+    @Test("pedir ajustes presenta la hoja de Settings")
+    func settingsRequestPresentsSheet() async {
+        let status = AccountStatus.demoActive
         var initial = AppFeature.State()
-        initial.path.append(.channels(ChannelsFeature.State(account: account, category: category)))
+        initial.session = .init(account: account, status: status)
+        initial.channelList = ChannelListFeature.State(account: account)
 
         let store = TestStore(initialState: initial) {
             AppFeature()
         }
         store.exhaustivity = .off(showSkippedAssertions: false)
 
-        await store.send(.path(.element(id: 0, action: .channels(.delegate(.channelSelected(channel, account: account)))))) {
+        await store.send(.channelList(.delegate(.settingsRequested))) {
+            $0.settings = SettingsFeature.State(account: self.account, status: status)
+        }
+    }
+
+    @Test("seleccionar un canal presenta el reproductor a pantalla completa")
+    func channelSelectionPresentsPlayer() async {
+        var initial = AppFeature.State()
+        initial.channels = ChannelsFeature.State(account: account, category: category)
+
+        let store = TestStore(initialState: initial) {
+            AppFeature()
+        }
+        store.exhaustivity = .off(showSkippedAssertions: false)
+
+        await store.send(.channels(.presented(.delegate(.channelSelected(channel, account: account))))) {
             $0.player = PlayerFeature.State(channel: self.channel, account: self.account)
         }
+    }
+
+    @Test("logout desde Settings limpia la sesión")
+    func logoutFromSettingsClearsSession() async {
+        var initial = AppFeature.State()
+        initial.session = .init(account: account, status: .demoActive)
+        initial.channelList = ChannelListFeature.State(account: account)
+        initial.settings = SettingsFeature.State(account: account, status: .demoActive)
+
+        let store = TestStore(initialState: initial) {
+            AppFeature()
+        } withDependencies: {
+            $0.credentialStore = InMemoryCredentialStore(account)
+        }
+        store.exhaustivity = .off(showSkippedAssertions: false)
+
+        await store.send(.settings(.presented(.delegate(.logoutRequested))))
+        #expect(store.state.session == nil)
     }
 
     @Test("cerrar el reproductor lo descarta")

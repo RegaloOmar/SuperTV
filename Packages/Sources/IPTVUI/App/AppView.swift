@@ -62,10 +62,10 @@ public struct SuperTVRootView: View {
             // Con `-demoCatalogChannels` salta directo a los canales; si no, se queda
             // en la lista de categorías.
             if args.contains("-demoCatalogChannels") {
-                state.path.append(.channels(ChannelsFeature.State(
+                state.channels = ChannelsFeature.State(
                     account: account,
                     category: ChannelCategory(id: "1", name: "Deportes")
-                )))
+                )
             }
         }
 
@@ -138,44 +138,91 @@ private struct DemoCatalogRepository: ChannelRepositoryProtocol {
 }
 #endif
 
-/// Vista raíz. Enruta entre login y categorías según haya sesión, dentro de un
-/// `NavigationStack` dirigido por `StackState`.
+/// Vista raíz. Enruta entre splash, login y el área autenticada (master-detail),
+/// que se adapta: en iPhone es un stack (categorías → canales); en iPad, una vista
+/// dividida (categorías en el sidebar | canales en el detalle).
 public struct AppView: View {
     @Bindable var store: StoreOf<AppFeature>
+
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
 
     public init(store: StoreOf<AppFeature>) {
         self.store = store
     }
 
     public var body: some View {
-        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            Group {
-                if store.isLaunching {
-                    SplashView()
-                } else if let channelListStore = store.scope(state: \.channelList, action: \.channelList) {
-                    ChannelListView(store: channelListStore)
-                } else {
-                    AuthView(store: store.scope(state: \.auth, action: \.auth))
-                }
-            }
+        content
             .task { store.send(.onLaunch) }
-        } destination: { store in
-            switch store.case {
-            case .channels(let store):
-                ChannelsView(store: store)
-            case .settings(let store):
-                SettingsView(store: store)
+            .sheet(item: $store.scope(state: \.settings, action: \.settings)) { settingsStore in
+                NavigationStack { SettingsView(store: settingsStore) }
+            }
+            #if os(iOS)
+            .fullScreenCover(item: $store.scope(state: \.player, action: \.player)) { playerStore in
+                PlayerView(store: playerStore)
+            }
+            #endif
+            // Estética SuperTV: negro + oro rosa. Dark-first (sin fogonazo blanco en TV).
+            .tint(DesignTokens.Palette.accent)
+            .preferredColorScheme(.dark)
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if store.isLaunching {
+            SplashView()
+        } else if let channelListStore = store.scope(state: \.channelList, action: \.channelList) {
+            authenticated(channelListStore)
+        } else {
+            NavigationStack {
+                AuthView(store: store.scope(state: \.auth, action: \.auth))
             }
         }
+    }
+
+    @ViewBuilder
+    private func authenticated(_ channelListStore: StoreOf<ChannelListFeature>) -> some View {
         #if os(iOS)
-        // El reproductor se presenta a pantalla completa (solo iOS; en macOS el paquete
-        // solo se compila para los tests, que no presentan UI).
-        .fullScreenCover(item: $store.scope(state: \.player, action: \.player)) { playerStore in
-            PlayerView(store: playerStore)
+        if horizontalSizeClass == .regular {
+            // iPad: master-detail (sidebar categorías | detalle canales).
+            NavigationSplitView {
+                ChannelListView(store: channelListStore)
+            } detail: {
+                detailColumn
+            }
+        } else {
+            stackLayout(channelListStore)
         }
+        #else
+        stackLayout(channelListStore)
         #endif
-        // Estética SuperTV: negro + oro rosa. Dark-first (sin fogonazo blanco en TV).
-        .tint(DesignTokens.Palette.accent)
-        .preferredColorScheme(.dark)
+    }
+
+    /// iPhone (y macOS): stack; seleccionar categoría empuja los canales.
+    private func stackLayout(_ channelListStore: StoreOf<ChannelListFeature>) -> some View {
+        NavigationStack {
+            ChannelListView(store: channelListStore)
+                .navigationDestination(item: $store.scope(state: \.channels, action: \.channels)) { channelsStore in
+                    ChannelsView(store: channelsStore)
+                }
+        }
+    }
+
+    /// iPad: columna de detalle con los canales de la categoría, o un placeholder.
+    @ViewBuilder
+    private var detailColumn: some View {
+        if let channelsStore = $store.scope(state: \.channels, action: \.channels).wrappedValue {
+            NavigationStack { ChannelsView(store: channelsStore) }
+        } else {
+            ZStack {
+                DesignTokens.Palette.background.ignoresSafeArea()
+                ContentUnavailableView(
+                    "Elige una categoría",
+                    systemImage: "tv",
+                    description: Text("Selecciona una categoría para ver sus canales.")
+                )
+            }
+        }
     }
 }

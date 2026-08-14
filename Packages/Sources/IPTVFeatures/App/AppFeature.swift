@@ -2,8 +2,8 @@ import ComposableArchitecture
 import IPTVCore
 import IPTVPlayerKit
 
-/// Reducer raíz de la app. Posee la sesión, la feature de Auth, el listado raíz de
-/// categorías tras login, y la pila de navegación (`StackState`).
+/// Reducer raíz de la app. Posee la sesión, la feature de Auth, y la navegación
+/// master-detail (categorías ↔ canales) que se adapta a iPhone (stack) e iPad (split).
 @Reducer
 public struct AppFeature {
     @ObservableState
@@ -15,11 +15,13 @@ public struct AppFeature {
         public var session: Session?
         /// Autenticación (pantalla inicial cuando no hay sesión).
         public var auth = AuthFeature.State()
-        /// Listado de categorías (raíz tras login).
+        /// Listado de categorías (sidebar en iPad / raíz en iPhone).
         public var channelList: ChannelListFeature.State?
-        /// Pila de navegación.
-        public var path = StackState<Path.State>()
-        /// Reproductor presentado a pantalla completa (fuera del stack de navegación).
+        /// Canales de la categoría seleccionada (detalle en iPad / push en iPhone).
+        @Presents public var channels: ChannelsFeature.State?
+        /// Ajustes, presentados como hoja.
+        @Presents public var settings: SettingsFeature.State?
+        /// Reproductor a pantalla completa (AVKit gestiona controles/rotación nativos).
         @Presents public var player: PlayerFeature.State?
 
         public init() {}
@@ -40,7 +42,8 @@ public struct AppFeature {
         case restoreFinished(RestoreOutcome)
         case auth(AuthFeature.Action)
         case channelList(ChannelListFeature.Action)
-        case path(StackActionOf<Path>)
+        case channels(PresentationAction<ChannelsFeature.Action>)
+        case settings(PresentationAction<SettingsFeature.Action>)
         case player(PresentationAction<PlayerFeature.Action>)
     }
 
@@ -49,14 +52,6 @@ public struct AppFeature {
         case authenticated(IPTVAccount, AccountStatus)
         /// No hay sesión válida; ir al login (con prefill si había credenciales guardadas).
         case needsLogin(prefill: IPTVAccount?)
-    }
-
-    /// Destinos navegables (push). El reproductor NO va aquí: se presenta a pantalla
-    /// completa para que AVKit gestione controles/rotación de forma nativa.
-    @Reducer
-    public enum Path {
-        case channels(ChannelsFeature)
-        case settings(SettingsFeature)
     }
 
     @Dependency(\.credentialStore) var credentialStore
@@ -73,7 +68,6 @@ public struct AppFeature {
             switch action {
             // MARK: Arranque (restaurar sesión desde Keychain sin parpadeo de login)
             case .onLaunch:
-                // Si un hook de demo ya fijó el estado, no restaurar.
                 guard state.isLaunching else { return .none }
                 return .run { [credentialStore, provider] send in
                     guard let account = try? credentialStore.load() else {
@@ -84,8 +78,6 @@ public struct AppFeature {
                         let status = try await provider.authenticate(account)
                         await send(.restoreFinished(.authenticated(account, status)))
                     } catch {
-                        // Había credenciales pero el re-login falló (red/expirada):
-                        // ir al login con los campos rellenos para reintentar.
                         await send(.restoreFinished(.needsLogin(prefill: account)))
                     }
                 }
@@ -114,54 +106,63 @@ public struct AppFeature {
             case .auth:
                 return .none
 
-            // MARK: Listado raíz
+            // MARK: Categorías (sidebar) → seleccionar categoría abre sus canales (detalle)
             case let .channelList(.delegate(.categorySelected(category, account))):
-                state.path.append(.channels(ChannelsFeature.State(account: account, category: category)))
+                state.channels = ChannelsFeature.State(account: account, category: category)
                 return .none
 
             case .channelList(.delegate(.settingsRequested)):
                 guard let session = state.session else { return .none }
-                state.path.append(.settings(SettingsFeature.State(account: session.account, status: session.status)))
+                state.settings = SettingsFeature.State(account: session.account, status: session.status)
                 return .none
 
             case .channelList:
                 return .none
 
-            // MARK: Reproductor (presentación a pantalla completa)
-            case let .path(.element(id: _, action: .channels(.delegate(.channelSelected(channel, account))))):
+            // MARK: Canales (detalle) → seleccionar canal presenta el reproductor
+            case let .channels(.presented(.delegate(.channelSelected(channel, account)))):
                 state.player = PlayerFeature.State(channel: channel, account: account)
                 return .none
 
-            // Al cerrarse el reproductor (Done/deslizar/close), parar el motor desde el padre.
+            case .channels:
+                return .none
+
+            // MARK: Settings (hoja)
+            case .settings(.presented(.delegate(.logoutRequested))):
+                return logout(state: &state)
+
+            case .settings:
+                return .none
+
+            // MARK: Reproductor (cover)
             case .player(.dismiss):
                 return stopPlayer()
 
             case .player:
-                return .none
-
-            // MARK: Navegación
-            case .path(.element(id: _, action: .settings(.delegate(.logoutRequested)))):
-                return logout(state: &state)
-
-            case .path:
                 return .none
             }
         }
         .ifLet(\.channelList, action: \.channelList) {
             ChannelListFeature()
         }
+        .ifLet(\.$channels, action: \.channels) {
+            ChannelsFeature()
+        }
+        .ifLet(\.$settings, action: \.settings) {
+            SettingsFeature()
+        }
         .ifLet(\.$player, action: \.player) {
             PlayerFeature()
         }
-        .forEach(\.path, action: \.path)
     }
 
     private func logout(state: inout State) -> Effect<Action> {
         state.session = nil
         state.channelList = nil
-        state.auth = AuthFeature.State()
-        state.path.removeAll()
+        state.channels = nil
+        state.settings = nil
         state.player = nil
+        state.auth = AuthFeature.State()
         return .merge(
             stopPlayer(),
             .run { [credentialStore] _ in try? credentialStore.delete() }
@@ -172,6 +173,3 @@ public struct AppFeature {
         .run { [playerEngine] _ in playerEngine.stop() }
     }
 }
-
-// `StackState<Path.State>` requiere que el estado de las destinations sea Equatable.
-extension AppFeature.Path.State: Equatable {}
