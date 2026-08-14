@@ -7,6 +7,7 @@ let package = Package(
     // (`swift test`, sin simulador). La app real es iOS; iPad/tvOS, fase posterior.
     platforms: [
         .iOS(.v18),
+        .tvOS(.v18),
         .macOS(.v14),
     ],
     products: [
@@ -19,6 +20,7 @@ let package = Package(
         .library(name: "IPTVDesignSystem", targets: ["IPTVDesignSystem"]),
         .library(name: "IPTVFeatures", targets: ["IPTVFeatures"]),
         .library(name: "IPTVUI", targets: ["IPTVUI"]),
+        .library(name: "IPTVUITV", targets: ["IPTVUITV"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.15.0"),
@@ -95,6 +97,19 @@ let package = Package(
         // tvOS tendrá su propio target de vistas reutilizando los mismos reducers.
         .target(
             name: "IPTVUI",
+            dependencies: [
+                "IPTVFeatures",
+                "IPTVCore",
+                "IPTVPlayerKit",
+                "IPTVDesignSystem",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ]
+        ),
+
+        // MARK: - Vistas de tvOS (focus/mando). Reutilizan los mismos reducers.
+        .target(
+            name: "IPTVUITV",
             dependencies: [
                 "IPTVFeatures",
                 "IPTVCore",

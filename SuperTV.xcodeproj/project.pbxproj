@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AA0000000000000000000003 /* IPTVUI in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000002 /* IPTVUI */; };
+		AA0000000000000000000005 /* IPTVUITV in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000004 /* IPTVUITV */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,12 +26,29 @@
 			remoteGlobalIDString = 8518AA89302CD99100416AB6;
 			remoteInfo = SuperTV;
 		};
+		8518AB27302EF13500416AB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8518AA82302CD99100416AB6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8518AB19302EF13300416AB6;
+			remoteInfo = SuperTVtvOS;
+		};
+		8518AB31302EF13500416AB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8518AA82302CD99100416AB6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8518AB19302EF13300416AB6;
+			remoteInfo = SuperTVtvOS;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8518AA8A302CD99100416AB6 /* SuperTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8518AA97302CD99300416AB6 /* SuperTVTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperTVTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8518AAA1302CD99300416AB6 /* SuperTVUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperTVUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8518AB1A302EF13300416AB6 /* SuperTVtvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperTVtvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8518AB26302EF13500416AB6 /* SuperTVtvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperTVtvOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8518AB30302EF13500416AB6 /* SuperTVtvOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperTVtvOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -47,6 +65,21 @@
 		8518AAA4302CD99300416AB6 /* SuperTVUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = SuperTVUITests;
+			sourceTree = "<group>";
+		};
+		8518AB1B302EF13300416AB6 /* SuperTVtvOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SuperTVtvOS;
+			sourceTree = "<group>";
+		};
+		8518AB29302EF13500416AB6 /* SuperTVtvOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SuperTVtvOSTests;
+			sourceTree = "<group>";
+		};
+		8518AB33302EF13500416AB6 /* SuperTVtvOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SuperTVtvOSUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -74,6 +107,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8518AB17302EF13300416AB6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000000000000000000005 /* IPTVUITV in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8518AB23302EF13500416AB6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8518AB2D302EF13500416AB6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -83,6 +138,9 @@
 				8518AA8C302CD99100416AB6 /* SuperTV */,
 				8518AA9A302CD99300416AB6 /* SuperTVTests */,
 				8518AAA4302CD99300416AB6 /* SuperTVUITests */,
+				8518AB1B302EF13300416AB6 /* SuperTVtvOS */,
+				8518AB29302EF13500416AB6 /* SuperTVtvOSTests */,
+				8518AB33302EF13500416AB6 /* SuperTVtvOSUITests */,
 				8518AA8B302CD99100416AB6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -93,6 +151,9 @@
 				8518AA8A302CD99100416AB6 /* SuperTV.app */,
 				8518AA97302CD99300416AB6 /* SuperTVTests.xctest */,
 				8518AAA1302CD99300416AB6 /* SuperTVUITests.xctest */,
+				8518AB1A302EF13300416AB6 /* SuperTVtvOS.app */,
+				8518AB26302EF13500416AB6 /* SuperTVtvOSTests.xctest */,
+				8518AB30302EF13500416AB6 /* SuperTVtvOSUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -169,6 +230,75 @@
 			productReference = 8518AAA1302CD99300416AB6 /* SuperTVUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		8518AB19302EF13300416AB6 /* SuperTVtvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8518AB3E302EF13500416AB6 /* Build configuration list for PBXNativeTarget "SuperTVtvOS" */;
+			buildPhases = (
+				8518AB16302EF13300416AB6 /* Sources */,
+				8518AB17302EF13300416AB6 /* Frameworks */,
+				8518AB18302EF13300416AB6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8518AB1B302EF13300416AB6 /* SuperTVtvOS */,
+			);
+			name = SuperTVtvOS;
+			packageProductDependencies = (
+				AA0000000000000000000004 /* IPTVUITV */,
+			);
+			productName = SuperTVtvOS;
+			productReference = 8518AB1A302EF13300416AB6 /* SuperTVtvOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8518AB25302EF13500416AB6 /* SuperTVtvOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8518AB3F302EF13500416AB6 /* Build configuration list for PBXNativeTarget "SuperTVtvOSTests" */;
+			buildPhases = (
+				8518AB22302EF13500416AB6 /* Sources */,
+				8518AB23302EF13500416AB6 /* Frameworks */,
+				8518AB24302EF13500416AB6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8518AB28302EF13500416AB6 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8518AB29302EF13500416AB6 /* SuperTVtvOSTests */,
+			);
+			name = SuperTVtvOSTests;
+			packageProductDependencies = (
+			);
+			productName = SuperTVtvOSTests;
+			productReference = 8518AB26302EF13500416AB6 /* SuperTVtvOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8518AB2F302EF13500416AB6 /* SuperTVtvOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8518AB40302EF13500416AB6 /* Build configuration list for PBXNativeTarget "SuperTVtvOSUITests" */;
+			buildPhases = (
+				8518AB2C302EF13500416AB6 /* Sources */,
+				8518AB2D302EF13500416AB6 /* Frameworks */,
+				8518AB2E302EF13500416AB6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8518AB32302EF13500416AB6 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8518AB33302EF13500416AB6 /* SuperTVtvOSUITests */,
+			);
+			name = SuperTVtvOSUITests;
+			packageProductDependencies = (
+			);
+			productName = SuperTVtvOSUITests;
+			productReference = 8518AB30302EF13500416AB6 /* SuperTVtvOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -189,6 +319,17 @@
 					8518AAA0302CD99300416AB6 = {
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = 8518AA89302CD99100416AB6;
+					};
+					8518AB19302EF13300416AB6 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					8518AB25302EF13500416AB6 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 8518AB19302EF13300416AB6;
+					};
+					8518AB2F302EF13500416AB6 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 8518AB19302EF13300416AB6;
 					};
 				};
 			};
@@ -212,6 +353,9 @@
 				8518AA89302CD99100416AB6 /* SuperTV */,
 				8518AA96302CD99300416AB6 /* SuperTVTests */,
 				8518AAA0302CD99300416AB6 /* SuperTVUITests */,
+				8518AB19302EF13300416AB6 /* SuperTVtvOS */,
+				8518AB25302EF13500416AB6 /* SuperTVtvOSTests */,
+				8518AB2F302EF13500416AB6 /* SuperTVtvOSUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -232,6 +376,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8518AA9F302CD99300416AB6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8518AB18302EF13300416AB6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8518AB24302EF13500416AB6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8518AB2E302EF13500416AB6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -262,6 +427,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8518AB16302EF13300416AB6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8518AB22302EF13500416AB6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8518AB2C302EF13500416AB6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -274,6 +460,16 @@
 			isa = PBXTargetDependency;
 			target = 8518AA89302CD99100416AB6 /* SuperTV */;
 			targetProxy = 8518AAA2302CD99300416AB6 /* PBXContainerItemProxy */;
+		};
+		8518AB28302EF13500416AB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8518AB19302EF13300416AB6 /* SuperTVtvOS */;
+			targetProxy = 8518AB27302EF13500416AB6 /* PBXContainerItemProxy */;
+		};
+		8518AB32302EF13500416AB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8518AB19302EF13300416AB6 /* SuperTVtvOS */;
+			targetProxy = 8518AB31302EF13500416AB6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -586,6 +782,161 @@
 			};
 			name = Release;
 		};
+		8518AB38302EF13500416AB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6A8498PHTR;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.regy.SuperTVtvOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		8518AB39302EF13500416AB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6A8498PHTR;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.regy.SuperTVtvOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 26.5;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8518AB3A302EF13500416AB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6A8498PHTR;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.regy.SuperTVtvOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SuperTVtvOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SuperTVtvOS";
+				TVOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		8518AB3B302EF13500416AB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6A8498PHTR;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.regy.SuperTVtvOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SuperTVtvOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SuperTVtvOS";
+				TVOS_DEPLOYMENT_TARGET = 26.5;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8518AB3C302EF13500416AB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6A8498PHTR;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.regy.SuperTVtvOSUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = SuperTVtvOS;
+				TVOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		8518AB3D302EF13500416AB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6A8498PHTR;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.regy.SuperTVtvOSUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = SuperTVtvOS;
+				TVOS_DEPLOYMENT_TARGET = 26.5;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -625,6 +976,33 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		8518AB3E302EF13500416AB6 /* Build configuration list for PBXNativeTarget "SuperTVtvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8518AB38302EF13500416AB6 /* Debug */,
+				8518AB39302EF13500416AB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8518AB3F302EF13500416AB6 /* Build configuration list for PBXNativeTarget "SuperTVtvOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8518AB3A302EF13500416AB6 /* Debug */,
+				8518AB3B302EF13500416AB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8518AB40302EF13500416AB6 /* Build configuration list for PBXNativeTarget "SuperTVtvOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8518AB3C302EF13500416AB6 /* Debug */,
+				8518AB3D302EF13500416AB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -638,6 +1016,10 @@
 		AA0000000000000000000002 /* IPTVUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = IPTVUI;
+		};
+		AA0000000000000000000004 /* IPTVUITV */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IPTVUITV;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
