@@ -1,4 +1,5 @@
 import SwiftUI
+import IPTVFeatures
 import IPTVDesignSystem
 
 /// Pantalla de arranque mientras se decide si hay sesión guardada. Dark-first:

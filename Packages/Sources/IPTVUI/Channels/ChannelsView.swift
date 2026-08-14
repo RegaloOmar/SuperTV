@@ -1,14 +1,14 @@
 import SwiftUI
+import IPTVFeatures
 import ComposableArchitecture
 import IPTVCore
 import IPTVDesignSystem
 
-/// Pantalla de categorías. Estética SuperTV: negro + oro rosa. La navegación real la
-/// ejecuta el padre (StackState) al recibir el delegate `categorySelected`.
-public struct ChannelListView: View {
-    @Bindable var store: StoreOf<ChannelListFeature>
+/// Pantalla de canales de una categoría. Estética SuperTV: negro + oro rosa.
+public struct ChannelsView: View {
+    @Bindable var store: StoreOf<ChannelsFeature>
 
-    public init(store: StoreOf<ChannelListFeature>) {
+    public init(store: StoreOf<ChannelsFeature>) {
         self.store = store
     }
 
@@ -16,11 +16,11 @@ public struct ChannelListView: View {
         ZStack {
             DesignTokens.Palette.background.ignoresSafeArea()
 
-            if store.isLoading && store.categories.isEmpty {
+            if store.isLoading && store.channels.isEmpty {
                 ProgressView()
                     .controlSize(.large)
                     .tint(DesignTokens.Palette.accent)
-            } else if let errorMessage = store.errorMessage, store.categories.isEmpty {
+            } else if let errorMessage = store.errorMessage, store.channels.isEmpty {
                 StatusView(
                     systemImage: "wifi.exclamationmark",
                     title: "No se pudo cargar",
@@ -28,11 +28,11 @@ public struct ChannelListView: View {
                     action: .init(title: "Reintentar") { store.send(.refresh) }
                 )
             } else {
-                categoryList
+                channelList
             }
         }
-        .navigationTitle("Categorías")
-        .searchable(text: $store.searchText, prompt: "Buscar categoría")
+        .navigationTitle(store.category.name)
+        .searchable(text: $store.searchText, prompt: "Buscar canal")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("Actualizar", systemImage: "arrow.clockwise") {
@@ -40,38 +40,34 @@ public struct ChannelListView: View {
                 }
                 .disabled(store.isLoading)
             }
-            ToolbarItem(placement: .primaryAction) {
-                Button("Ajustes", systemImage: "gearshape") {
-                    store.send(.settingsButtonTapped)
-                }
-            }
         }
         .task { store.send(.onTask) }
     }
 
-    private var categoryList: some View {
+    private var channelList: some View {
         List {
-            ForEach(store.filteredCategories) { category in
+            ForEach(store.filteredChannels) { channel in
                 Button {
-                    store.send(.categoryTapped(category))
+                    store.send(.channelTapped(channel))
                 } label: {
-                    CategoryRow(name: category.name)
+                    ChannelRow(channel: channel)
                 }
                 .buttonStyle(.plain)
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(top: 5, leading: DesignTokens.Spacing.md, bottom: 5, trailing: DesignTokens.Spacing.md))
-                .accessibilityHint("Toca para ver los canales")
+                .accessibilityElement(children: .combine)
+                .accessibilityHint("Toca para reproducir")
             }
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .overlay {
-            if store.filteredCategories.isEmpty {
+            if store.filteredChannels.isEmpty {
                 StatusView(
                     systemImage: "magnifyingglass",
                     title: "Sin resultados",
-                    message: store.searchText.isEmpty ? "No hay categorías." : "Nada coincide con “\(store.searchText)”."
+                    message: store.searchText.isEmpty ? "No hay canales en esta categoría." : "Nada coincide con “\(store.searchText)”."
                 )
             }
         }
@@ -79,30 +75,36 @@ public struct ChannelListView: View {
     }
 }
 
-/// Fila de categoría: icono, nombre y chevron en oro rosa.
-private struct CategoryRow: View {
-    let name: String
+/// Fila de canal: logo grande, nombre, número en oro rosa y botón de reproducir.
+private struct ChannelRow: View {
+    let channel: Channel
 
     var body: some View {
         HStack(spacing: DesignTokens.Spacing.md) {
-            Image(systemName: "square.stack.3d.up.fill")
-                .font(.body)
-                .foregroundStyle(DesignTokens.Palette.accent)
-                .frame(width: 36, height: 36)
-                .background(DesignTokens.Palette.surfaceElevated, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.sm))
+            RemoteLogoView(url: channel.logoURL, size: 56)
 
-            Text(name)
-                .font(.headline)
-                .foregroundStyle(DesignTokens.Palette.textPrimary)
-                .lineLimit(1)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(channel.name)
+                    .font(.headline)
+                    .foregroundStyle(DesignTokens.Palette.textPrimary)
+                    .lineLimit(1)
+                if let number = channel.channelNumber {
+                    Text("CANAL \(number)")
+                        .font(.caption2.weight(.semibold))
+                        .tracking(0.5)
+                        .foregroundStyle(DesignTokens.Palette.accent)
+                }
+            }
 
             Spacer()
 
-            Image(systemName: "chevron.right")
+            Image(systemName: "play.fill")
                 .font(.footnote.weight(.bold))
-                .foregroundStyle(DesignTokens.Palette.accent)
+                .foregroundStyle(DesignTokens.Palette.background)
+                .frame(width: 34, height: 34)
+                .background(DesignTokens.Palette.accentGradient, in: Circle())
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
         .padding(.horizontal, DesignTokens.Spacing.md)
         .background(DesignTokens.Palette.surface, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
         .overlay(

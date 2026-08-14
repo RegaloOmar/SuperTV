@@ -27,6 +27,11 @@ public struct AppFeature {
         public struct Session: Equatable {
             public var account: IPTVAccount
             public var status: AccountStatus
+
+            public init(account: IPTVAccount, status: AccountStatus) {
+                self.account = account
+                self.status = status
+            }
         }
     }
 

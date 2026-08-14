@@ -1,4 +1,5 @@
 import SwiftUI
+import IPTVFeatures
 import AVKit
 import ComposableArchitecture
 import IPTVCore

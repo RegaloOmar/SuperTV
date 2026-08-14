@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA0000000000000000000003 /* IPTVFeatures in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000002 /* IPTVFeatures */; };
+		AA0000000000000000000003 /* IPTVUI in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000002 /* IPTVUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA0000000000000000000003 /* IPTVFeatures in Frameworks */,
+				AA0000000000000000000003 /* IPTVUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +117,7 @@
 			);
 			name = SuperTV;
 			packageProductDependencies = (
-				AA0000000000000000000002 /* IPTVFeatures */,
+				AA0000000000000000000002 /* IPTVUI */,
 			);
 			productName = SuperTV;
 			productReference = 8518AA8A302CD99100416AB6 /* SuperTV.app */;
@@ -635,9 +635,9 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		AA0000000000000000000002 /* IPTVFeatures */ = {
+		AA0000000000000000000002 /* IPTVUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = IPTVFeatures;
+			productName = IPTVUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

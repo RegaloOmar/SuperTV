@@ -18,6 +18,7 @@ let package = Package(
         .library(name: "IPTVPlayerKit", targets: ["IPTVPlayerKit"]),
         .library(name: "IPTVDesignSystem", targets: ["IPTVDesignSystem"]),
         .library(name: "IPTVFeatures", targets: ["IPTVFeatures"]),
+        .library(name: "IPTVUI", targets: ["IPTVUI"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.15.0"),
@@ -69,7 +70,8 @@ let package = Package(
             dependencies: []
         ),
 
-        // MARK: - Features TCA. La única capa que conoce ComposableArchitecture.
+        // MARK: - Features TCA (SOLO lógica: reducers, estado, efectos).
+        // Reutilizable por cualquier plataforma (iOS/iPad/tvOS). Sin vistas.
         .target(
             name: "IPTVFeatures",
             dependencies: [
@@ -86,6 +88,20 @@ let package = Package(
             dependencies: [
                 "IPTVFeatures",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+
+        // MARK: - Vistas SwiftUI (iOS/iPad). Consumen los reducers de IPTVFeatures.
+        // tvOS tendrá su propio target de vistas reutilizando los mismos reducers.
+        .target(
+            name: "IPTVUI",
+            dependencies: [
+                "IPTVFeatures",
+                "IPTVCore",
+                "IPTVPlayerKit",
+                "IPTVDesignSystem",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
             ]
         ),
     ]

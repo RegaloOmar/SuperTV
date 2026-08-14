@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import IPTVFeatures
+import IPTVUI
 
 @main
 struct SuperTVApp: App {
