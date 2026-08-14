@@ -47,7 +47,7 @@ public struct ChannelsView: View {
     private var channelList: some View {
         ScrollView {
             // Cuadrícula adaptativa: 1 columna en iPhone, varias en iPad.
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 320), spacing: DesignTokens.Spacing.md)], spacing: DesignTokens.Spacing.md) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 360), spacing: DesignTokens.Spacing.md)], spacing: DesignTokens.Spacing.md) {
                 ForEach(store.filteredChannels) { channel in
                     Button {
                         store.send(.channelTapped(channel))
@@ -79,14 +79,15 @@ private struct ChannelRow: View {
     let channel: Channel
 
     var body: some View {
-        HStack(spacing: DesignTokens.Spacing.md) {
-            RemoteLogoView(url: channel.logoURL, size: 56)
+        HStack(spacing: DesignTokens.Spacing.sm + 2) {
+            RemoteLogoView(url: channel.logoURL, size: 48)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(channel.name)
-                    .font(.headline)
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(DesignTokens.Palette.textPrimary)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.85)
                 if let number = channel.channelNumber {
                     Text("CANAL \(number)")
                         .font(.caption2.weight(.semibold))
