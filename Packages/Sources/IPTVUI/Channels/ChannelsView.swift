@@ -45,23 +45,22 @@ public struct ChannelsView: View {
     }
 
     private var channelList: some View {
-        List {
-            ForEach(store.filteredChannels) { channel in
-                Button {
-                    store.send(.channelTapped(channel))
-                } label: {
-                    ChannelRow(channel: channel)
+        ScrollView {
+            // Cuadrícula adaptativa: 1 columna en iPhone, varias en iPad.
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 320), spacing: DesignTokens.Spacing.md)], spacing: DesignTokens.Spacing.md) {
+                ForEach(store.filteredChannels) { channel in
+                    Button {
+                        store.send(.channelTapped(channel))
+                    } label: {
+                        ChannelRow(channel: channel)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityHint("Toca para reproducir")
                 }
-                .buttonStyle(.plain)
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(top: 5, leading: DesignTokens.Spacing.md, bottom: 5, trailing: DesignTokens.Spacing.md))
-                .accessibilityElement(children: .combine)
-                .accessibilityHint("Toca para reproducir")
             }
+            .padding(DesignTokens.Spacing.md)
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
         .overlay {
             if store.filteredChannels.isEmpty {
                 StatusView(

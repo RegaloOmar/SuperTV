@@ -51,22 +51,21 @@ public struct ChannelListView: View {
     }
 
     private var categoryList: some View {
-        List {
-            ForEach(store.filteredCategories) { category in
-                Button {
-                    store.send(.categoryTapped(category))
-                } label: {
-                    CategoryRow(name: category.name)
+        ScrollView {
+            // Cuadrícula adaptativa: 1 columna en iPhone, varias en iPad.
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: DesignTokens.Spacing.md)], spacing: DesignTokens.Spacing.md) {
+                ForEach(store.filteredCategories) { category in
+                    Button {
+                        store.send(.categoryTapped(category))
+                    } label: {
+                        CategoryRow(name: category.name)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint("Toca para ver los canales")
                 }
-                .buttonStyle(.plain)
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(top: 5, leading: DesignTokens.Spacing.md, bottom: 5, trailing: DesignTokens.Spacing.md))
-                .accessibilityHint("Toca para ver los canales")
             }
+            .padding(DesignTokens.Spacing.md)
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
         .overlay {
             if store.filteredCategories.isEmpty {
                 StatusView(
