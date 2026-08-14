@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Info.plist del target tvOS (SuperTVtvOS). Se referencia con INFOPLIST_FILE
+	  y se mantiene GENERATE_INFOPLIST_FILE = YES: Xcode fusiona estas claves con
+	  las autogeneradas.
+
+	  Los paneles Xtream Codes sirven casi siempre por HTTP (no HTTPS) y el host lo
+	  introduce el usuario, así que no se puede predefinir una lista de dominios.
+	  Por eso se permite carga arbitraria (igual que en iOS/iPad). En Fase 5
+	  (App Store) se justifica en las notas de review.
+	-->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<!-- Necesario para que el audio del stream siga sonando (NowPlaying). -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+</dict>
+</plist>

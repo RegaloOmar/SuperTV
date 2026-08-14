@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "Fondo 400x240.png",
       "idiom" : "tv",
       "scale" : "1x"
     },
     {
+      "filename" : "Fondo 800x480.png",
       "idiom" : "tv",
       "scale" : "2x"
     }

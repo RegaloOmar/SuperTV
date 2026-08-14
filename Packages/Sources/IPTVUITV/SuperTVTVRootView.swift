@@ -1,19 +1,49 @@
 #if os(tvOS)
 import SwiftUI
 import ComposableArchitecture
+import Dependencies
+import IPTVCore
 import IPTVFeatures
 import IPTVDesignSystem
 
 /// Punto de entrada de la UI de tvOS. Reutiliza los reducers de `IPTVFeatures`
 /// (misma lógica que iPhone/iPad); las vistas son propias de tvOS (focus/mando).
 public struct SuperTVTVRootView: View {
-    @State private var store = Store(initialState: AppFeature.State()) {
-        AppFeature()
-    }
+    @State private var store: StoreOf<AppFeature>
 
     public init() {
         // Caché amplia para logos de canal (los IPTV pesan).
         URLCache.shared = URLCache(memoryCapacity: 64 * 1024 * 1024, diskCapacity: 512 * 1024 * 1024)
+
+        var state = AppFeature.State()
+        var demoCatalog = false
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-demoCatalog") {
+            demoCatalog = true
+            let account = IPTVAccount(host: URL(string: "http://demo.local")!, username: "demo", password: "demo")
+            state.session = .init(
+                account: account,
+                status: AccountStatus(state: .active, expiresAt: nil, isTrial: false, activeConnections: 1, maxConnections: 2)
+            )
+            state.channelList = ChannelListFeature.State(account: account)
+            state.isLaunching = false
+            if ProcessInfo.processInfo.arguments.contains("-demoCatalogChannels") {
+                state.channels = ChannelsFeature.State(account: account, category: ChannelCategory(id: "1", name: "Deportes"))
+            }
+        }
+        #endif
+
+        #if DEBUG
+        if demoCatalog {
+            _store = State(initialValue: withDependencies {
+                $0.channelRepository = DemoCatalogRepository()
+            } operation: {
+                Store(initialState: state) { AppFeature() }
+            })
+            return
+        }
+        #endif
+        _store = State(initialValue: Store(initialState: state) { AppFeature() })
     }
 
     public var body: some View {
@@ -70,4 +100,31 @@ struct TVSplashView: View {
         }
     }
 }
+
+#if DEBUG
+/// Catálogo de prueba para visualizar el diseño de tvOS (`-demoCatalog`).
+private struct DemoCatalogRepository: ChannelRepositoryProtocol {
+    func categories(for account: IPTVAccount, forceRefresh: Bool) async throws -> [ChannelCategory] {
+        [
+            ChannelCategory(id: "1", name: "Deportes", displayOrder: 0),
+            ChannelCategory(id: "2", name: "Noticias", displayOrder: 1),
+            ChannelCategory(id: "3", name: "Películas", displayOrder: 2),
+            ChannelCategory(id: "4", name: "Series", displayOrder: 3),
+            ChannelCategory(id: "5", name: "Infantil", displayOrder: 4),
+            ChannelCategory(id: "6", name: "Documentales", displayOrder: 5),
+        ]
+    }
+    func channels(for account: IPTVAccount, categoryID: String?, forceRefresh: Bool) async throws -> [Channel] {
+        [
+            Channel(id: 1, name: "ESPN Deportes HD", categoryID: "1", channelNumber: 101),
+            Channel(id: 2, name: "Fox Sports Premium", categoryID: "1", channelNumber: 205),
+            Channel(id: 3, name: "DAZN LaLiga", categoryID: "1", channelNumber: 312),
+            Channel(id: 4, name: "Movistar Deportes", categoryID: "1", channelNumber: 418),
+            Channel(id: 5, name: "Eurosport 1", categoryID: "1", channelNumber: 520),
+            Channel(id: 6, name: "GolTV", categoryID: "1", channelNumber: 601),
+        ]
+    }
+    func clearCache() async throws {}
+}
+#endif
 #endif

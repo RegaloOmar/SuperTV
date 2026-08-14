@@ -9,46 +9,78 @@ import IPTVDesignSystem
 struct TVCategoriesView: View {
     @Bindable var store: StoreOf<ChannelListFeature>
 
-    private let columns = [GridItem(.adaptive(minimum: 360), spacing: 40)]
+    // Tres columnas fijas (antes la rejilla adaptativa metía 4).
+    private let columns = [
+        GridItem(.flexible(), spacing: 40),
+        GridItem(.flexible(), spacing: 40),
+        GridItem(.flexible(), spacing: 40),
+    ]
 
     var body: some View {
         ZStack {
             DesignTokens.Palette.background.ignoresSafeArea()
 
-            if store.isLoading && store.categories.isEmpty {
-                ProgressView().controlSize(.large).tint(DesignTokens.Palette.accent)
-            } else if let errorMessage = store.errorMessage, store.categories.isEmpty {
-                StatusView(
-                    systemImage: "wifi.exclamationmark",
-                    title: "No se pudo cargar",
-                    message: errorMessage,
-                    action: .init(title: "Reintentar") { store.send(.refresh) }
-                )
-            } else {
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 40) {
-                        ForEach(store.categories) { category in
-                            Button {
-                                store.send(.categoryTapped(category))
-                            } label: {
-                                TVCategoryCard(name: category.name)
+            VStack(spacing: 0) {
+                header
+
+                if store.isLoading && store.categories.isEmpty {
+                    Spacer()
+                    ProgressView().controlSize(.large).tint(DesignTokens.Palette.accent)
+                    Spacer()
+                } else if let errorMessage = store.errorMessage, store.categories.isEmpty {
+                    Spacer()
+                    StatusView(
+                        systemImage: "wifi.exclamationmark",
+                        title: "No se pudo cargar",
+                        message: errorMessage,
+                        action: .init(title: "Reintentar") { store.send(.refresh) }
+                    )
+                    Spacer()
+                } else {
+                    ScrollView {
+                        LazyVGrid(columns: columns, spacing: 40) {
+                            ForEach(store.categories) { category in
+                                Button {
+                                    store.send(.categoryTapped(category))
+                                } label: {
+                                    TVCategoryCard(name: category.name)
+                                }
+                                .buttonStyle(.card)
                             }
-                            .buttonStyle(.card)
                         }
+                        .padding(.horizontal, 60)
+                        .padding(.bottom, 60)
                     }
-                    .padding(60)
                 }
             }
         }
-        .navigationTitle("Categorías")
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Ajustes", systemImage: "gearshape") {
-                    store.send(.settingsButtonTapped)
-                }
-            }
-        }
+        .navigationBarHidden(true)
         .task { store.send(.onTask) }
+    }
+
+    private var header: some View {
+        HStack {
+            Text("Categorías")
+                .font(.system(size: 56, weight: .bold))
+                .foregroundStyle(DesignTokens.Palette.textPrimary)
+            Spacer()
+            Button {
+                store.send(.settingsButtonTapped)
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "gearshape")
+                    Text("Ajustes")
+                }
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(DesignTokens.Palette.textPrimary)
+                .padding(.horizontal, 32)
+                .padding(.vertical, 18)
+            }
+            .buttonStyle(.card)
+        }
+        .padding(.horizontal, 60)
+        .padding(.top, 40)
+        .padding(.bottom, 20)
     }
 }
 
@@ -63,10 +95,11 @@ private struct TVCategoryCard: View {
             Text(name)
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(DesignTokens.Palette.textPrimary)
-                .lineLimit(1)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 220)
+        .frame(minHeight: 220)
         .background(DesignTokens.Palette.surface)
     }
 }

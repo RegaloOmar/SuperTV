@@ -9,7 +9,11 @@ import IPTVDesignSystem
 struct TVChannelsView: View {
     @Bindable var store: StoreOf<ChannelsFeature>
 
-    private let columns = [GridItem(.adaptive(minimum: 420), spacing: 40)]
+    // Dos columnas fijas: tarjetas anchas para que el nombre del canal no se corte.
+    private let columns = [
+        GridItem(.flexible(), spacing: 40),
+        GridItem(.flexible(), spacing: 40),
+    ]
 
     var body: some View {
         ZStack {
@@ -55,7 +59,8 @@ private struct TVChannelCard: View {
                 Text(channel.name)
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(DesignTokens.Palette.textPrimary)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
                 if let number = channel.channelNumber {
                     Text("CANAL \(number)")
                         .font(.caption.weight(.semibold))
@@ -68,7 +73,7 @@ private struct TVChannelCard: View {
                 .foregroundStyle(DesignTokens.Palette.accent)
         }
         .padding(28)
-        .frame(height: 150)
+        .frame(minHeight: 150)
         .background(DesignTokens.Palette.surface)
     }
 }

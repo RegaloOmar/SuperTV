@@ -29,16 +29,31 @@ struct TVSettingsView: View {
                     Button {
                         store.send(.clearCacheTapped)
                     } label: {
-                        Label(store.cacheCleared ? "Caché limpiada" : "Limpiar caché",
-                              systemImage: store.cacheCleared ? "checkmark" : "trash")
+                        HStack(spacing: 12) {
+                            Image(systemName: store.cacheCleared ? "checkmark" : "trash")
+                            Text(store.cacheCleared ? "Caché limpiada" : "Limpiar caché")
+                        }
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(DesignTokens.Palette.textPrimary)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 18)
                     }
+                    .buttonStyle(.card)
                     .disabled(store.isClearingCache)
 
-                    Button(role: .destructive) {
+                    Button {
                         store.send(.logoutTapped)
                     } label: {
-                        Label("Cerrar sesión", systemImage: "rectangle.portrait.and.arrow.right")
+                        HStack(spacing: 12) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                            Text("Cerrar sesión")
+                        }
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.red)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 18)
                     }
+                    .buttonStyle(.card)
                 }
                 .padding(.top, DesignTokens.Spacing.lg)
             }
