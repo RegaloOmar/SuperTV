@@ -37,6 +37,17 @@ public final class AVPlayerEngine: PlayerEngine, @unchecked Sendable {
         lock.withLock { continuation }?.yield(state)
     }
 
+    /// Ejecuta en el hilo principal. Todas las mutaciones de `avPlayer` deben pasar por
+    /// aquí: hay un `AVPlayerViewController` enganchado que reacciona haciendo *layout*,
+    /// y UIKit prohíbe tocar el motor de layout desde un hilo en segundo plano.
+    private func onMain(_ work: @escaping @Sendable () -> Void) {
+        if Thread.isMainThread {
+            work()
+        } else {
+            DispatchQueue.main.async(execute: work)
+        }
+    }
+
     public func stateStream() -> AsyncStream<PlaybackState> {
         let (stream, continuation) = AsyncStream<PlaybackState>.makeStream()
         lock.withLock {
@@ -50,53 +61,63 @@ public final class AVPlayerEngine: PlayerEngine, @unchecked Sendable {
     public func load(_ stream: LiveStream, title: String) {
         currentTitle = title
         activateAudioSession()
-        avPlayer.isMuted = false
-        avPlayer.volume = 1.0
         yield(.loading)
 
-        let item = AVPlayerItem(url: stream.url)
-        statusObservation = item.observe(\.status, options: [.new]) { [weak self] item, _ in
-            if item.status == .failed {
-                self?.yield(.failed(.streamUnavailable))
-            }
-        }
-        avPlayer.replaceCurrentItem(with: item)
+        onMain { [weak self] in
+            guard let self else { return }
+            self.avPlayer.isMuted = false
+            self.avPlayer.volume = 1.0
 
-        timeControlObservation = avPlayer.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
-            switch player.timeControlStatus {
-            case .playing:
-                self?.yield(.playing)
-            case .waitingToPlayAtSpecifiedRate:
-                self?.yield(.buffering)
-            case .paused:
-                self?.yield(.paused)
-            @unknown default:
-                break
+            let item = AVPlayerItem(url: stream.url)
+            self.statusObservation = item.observe(\.status, options: [.new]) { [weak self] item, _ in
+                if item.status == .failed {
+                    self?.yield(.failed(.streamUnavailable))
+                }
             }
-        }
+            self.avPlayer.replaceCurrentItem(with: item)
 
-        updateNowPlaying()
+            self.timeControlObservation = self.avPlayer.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
+                switch player.timeControlStatus {
+                case .playing:
+                    self?.yield(.playing)
+                case .waitingToPlayAtSpecifiedRate:
+                    self?.yield(.buffering)
+                case .paused:
+                    self?.yield(.paused)
+                @unknown default:
+                    break
+                }
+            }
+
+            self.updateNowPlaying()
+        }
     }
 
     public func play() {
-        avPlayer.play()
-        updateNowPlaying()
+        onMain { [weak self] in
+            self?.avPlayer.play()
+            self?.updateNowPlaying()
+        }
     }
 
     public func pause() {
-        avPlayer.pause()
+        onMain { [weak self] in self?.avPlayer.pause() }
     }
 
     public func stop() {
-        avPlayer.pause()
-        avPlayer.replaceCurrentItem(with: nil)
-        // Invalida los observers KVO (evita callbacks colgando) y cierra el flujo.
-        statusObservation = nil
-        timeControlObservation = nil
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        // Cierra el flujo primero para que el `for await` del reducer termine ya.
         lock.withLock {
             continuation?.finish()
             continuation = nil
+        }
+        onMain { [weak self] in
+            guard let self else { return }
+            self.avPlayer.pause()
+            self.avPlayer.replaceCurrentItem(with: nil)
+            // Invalida los observers KVO (evita callbacks colgando).
+            self.statusObservation = nil
+            self.timeControlObservation = nil
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
         }
     }
 
@@ -107,7 +128,7 @@ public final class AVPlayerEngine: PlayerEngine, @unchecked Sendable {
     }
 
     public func setVolume(_ volume: Float) {
-        avPlayer.volume = volume
+        onMain { [weak self] in self?.avPlayer.volume = volume }
     }
 
     private func updateNowPlaying() {
