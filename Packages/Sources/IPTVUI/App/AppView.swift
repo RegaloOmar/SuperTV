@@ -213,7 +213,10 @@ public struct AppView: View {
     @ViewBuilder
     private var detailColumn: some View {
         if let channelsStore = $store.scope(state: \.channels, action: \.channels).wrappedValue {
+            // `.id(categoría)` fuerza a SwiftUI a recrear el detalle al cambiar de
+            // categoría (si no, reutiliza la vista y no refresca la lista).
             NavigationStack { ChannelsView(store: channelsStore) }
+                .id(channelsStore.category.id)
         } else {
             ZStack {
                 DesignTokens.Palette.background.ignoresSafeArea()

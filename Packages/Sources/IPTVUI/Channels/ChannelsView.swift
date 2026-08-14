@@ -41,7 +41,9 @@ public struct ChannelsView: View {
                 .disabled(store.isLoading)
             }
         }
-        .task { store.send(.onTask) }
+        // `id:` liga la carga a la categoría: si la vista se reutiliza para otra
+        // categoría (vista dividida en iPad), recarga sus canales.
+        .task(id: store.category.id) { store.send(.onTask) }
     }
 
     private var channelList: some View {
