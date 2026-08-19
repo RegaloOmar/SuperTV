@@ -64,19 +64,36 @@ struct TVCategoriesView: View {
                 .font(.system(size: 56, weight: .bold))
                 .foregroundStyle(DesignTokens.Palette.textPrimary)
             Spacer()
-            Button {
-                store.send(.settingsButtonTapped)
-            } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "gearshape")
-                    Text("Settings")
+            HStack(spacing: DesignTokens.Spacing.lg) {
+                Button {
+                    store.send(.refresh)
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "arrow.clockwise")
+                        Text("Refresh")
+                    }
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(DesignTokens.Palette.textPrimary)
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 18)
                 }
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(DesignTokens.Palette.textPrimary)
-                .padding(.horizontal, 32)
-                .padding(.vertical, 18)
+                .buttonStyle(.card)
+                .disabled(store.isLoading)
+
+                Button {
+                    store.send(.settingsButtonTapped)
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "gearshape")
+                        Text("Settings")
+                    }
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(DesignTokens.Palette.textPrimary)
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 18)
+                }
+                .buttonStyle(.card)
             }
-            .buttonStyle(.card)
         }
         .padding(.horizontal, 60)
         .padding(.top, 40)
