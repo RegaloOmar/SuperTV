@@ -62,7 +62,7 @@ public struct AuthFeature {
 
             case .loginButtonTapped:
                 guard let url = state.normalizedHostURL else {
-                    state.errorMessage = "La dirección del servidor no es válida."
+                    state.errorMessage = "The server address isn't valid."
                     return .none
                 }
                 let account = IPTVAccount(

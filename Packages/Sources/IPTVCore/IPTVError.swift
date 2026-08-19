@@ -17,17 +17,17 @@ extension IPTVError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidCredentials:
-            return "Usuario o contraseña incorrectos."
+            return "Incorrect username or password."
         case .accountExpired:
-            return "Tu suscripción ha expirado."
+            return "Your subscription has expired."
         case .network(let reason):
-            return "Error de conexión: \(reason)"
+            return "Connection error: \(reason)"
         case .decoding(let reason):
-            return "Respuesta inesperada del servidor: \(reason)"
+            return "Unexpected server response: \(reason)"
         case .streamUnavailable:
-            return "Este canal no está disponible ahora mismo."
+            return "This channel isn't available right now."
         case .notImplemented:
-            return "Función no implementada."
+            return "Feature not implemented."
         case .unknown(let reason):
             return reason
         }

@@ -24,9 +24,9 @@ struct TVChannelsView: View {
             } else if let errorMessage = store.errorMessage, store.channels.isEmpty {
                 StatusView(
                     systemImage: "wifi.exclamationmark",
-                    title: "No se pudo cargar",
+                    title: "Couldn't load",
                     message: errorMessage,
-                    action: .init(title: "Reintentar") { store.send(.refresh) }
+                    action: .init(title: "Retry") { store.send(.refresh) }
                 )
             } else {
                 ScrollView {
@@ -62,7 +62,7 @@ private struct TVChannelCard: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 if let number = channel.channelNumber {
-                    Text("CANAL \(number)")
+                    Text("CHANNEL \(number)")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(DesignTokens.Palette.accent)
                 }

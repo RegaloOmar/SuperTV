@@ -64,7 +64,7 @@ public struct SuperTVRootView: View {
             if args.contains("-demoCatalogChannels") {
                 state.channels = ChannelsFeature.State(
                     account: account,
-                    category: ChannelCategory(id: "1", name: "Deportes")
+                    category: ChannelCategory(id: "1", name: "Sports")
                 )
             }
         }
@@ -113,13 +113,13 @@ private struct DemoStreamProvider: PlayableStreamProviding {
 private struct DemoCatalogRepository: ChannelRepositoryProtocol {
     func categories(for account: IPTVAccount, forceRefresh: Bool) async throws -> [ChannelCategory] {
         [
-            ChannelCategory(id: "1", name: "Deportes", displayOrder: 0),
-            ChannelCategory(id: "2", name: "Noticias", displayOrder: 1),
-            ChannelCategory(id: "3", name: "Películas", displayOrder: 2),
+            ChannelCategory(id: "1", name: "Sports", displayOrder: 0),
+            ChannelCategory(id: "2", name: "News", displayOrder: 1),
+            ChannelCategory(id: "3", name: "Movies", displayOrder: 2),
             ChannelCategory(id: "4", name: "Series", displayOrder: 3),
-            ChannelCategory(id: "5", name: "Infantil", displayOrder: 4),
-            ChannelCategory(id: "6", name: "Documentales", displayOrder: 5),
-            ChannelCategory(id: "7", name: "Música", displayOrder: 6),
+            ChannelCategory(id: "5", name: "Kids", displayOrder: 4),
+            ChannelCategory(id: "6", name: "Documentaries", displayOrder: 5),
+            ChannelCategory(id: "7", name: "Music", displayOrder: 6),
         ]
     }
     func channels(for account: IPTVAccount, categoryID: String?, forceRefresh: Bool) async throws -> [Channel] {
@@ -221,9 +221,9 @@ public struct AppView: View {
             ZStack {
                 DesignTokens.Palette.background.ignoresSafeArea()
                 ContentUnavailableView(
-                    "Elige una categoría",
+                    "Choose a category",
                     systemImage: "tv",
-                    description: Text("Selecciona una categoría para ver sus canales.")
+                    description: Text("Select a category to see its channels.")
                 )
             }
         }

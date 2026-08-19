@@ -16,14 +16,14 @@ struct TVSettingsView: View {
             DesignTokens.Palette.background.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-                Text("Ajustes")
+                Text("Settings")
                     .font(.system(size: 56, weight: .bold))
                     .foregroundStyle(DesignTokens.Palette.textPrimary)
 
-                infoRow("Servidor", store.account.host.absoluteString)
-                infoRow("Usuario", store.account.username)
-                infoRow("Estado", status.state.rawValue, accent: true)
-                infoRow("Conexiones", "\(status.activeConnections) / \(status.maxConnections)")
+                infoRow("Server", store.account.host.absoluteString)
+                infoRow("Username", store.account.username)
+                infoRow("Status", status.state.rawValue, accent: true)
+                infoRow("Connections", "\(status.activeConnections) / \(status.maxConnections)")
 
                 HStack(spacing: DesignTokens.Spacing.lg) {
                     Button {
@@ -31,7 +31,7 @@ struct TVSettingsView: View {
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: store.cacheCleared ? "checkmark" : "trash")
-                            Text(store.cacheCleared ? "Caché limpiada" : "Limpiar caché")
+                            Text(store.cacheCleared ? "Cache cleared" : "Clear cache")
                         }
                         .font(.title3.weight(.semibold))
                         .foregroundStyle(DesignTokens.Palette.textPrimary)
@@ -46,7 +46,7 @@ struct TVSettingsView: View {
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: "rectangle.portrait.and.arrow.right")
-                            Text("Cerrar sesión")
+                            Text("Log out")
                         }
                         .font(.title3.weight(.semibold))
                         .foregroundStyle(.red)

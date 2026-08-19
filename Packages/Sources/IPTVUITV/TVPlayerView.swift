@@ -26,9 +26,9 @@ struct TVPlayerView: View {
         if let errorMessage = store.errorMessage {
             StatusView(
                 systemImage: "exclamationmark.triangle.fill",
-                title: "No se pudo reproducir",
+                title: "Couldn't play",
                 message: errorMessage,
-                action: .init(title: "Reintentar") { store.send(.retryTapped) }
+                action: .init(title: "Retry") { store.send(.retryTapped) }
             )
             .background(.black.opacity(0.6))
         } else if store.isBuffering {

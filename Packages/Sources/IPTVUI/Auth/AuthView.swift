@@ -21,7 +21,7 @@ public struct AuthView: View {
 
                     VStack(spacing: DesignTokens.Spacing.md) {
                         fieldCard {
-                            TextField("Servidor (ej. ejemplo.com:8080)", text: $store.host)
+                            TextField("Server (e.g. example.com:8080)", text: $store.host)
                                 .autocorrectionDisabled()
                                 #if os(iOS)
                                 .textInputAutocapitalization(.never)
@@ -30,7 +30,7 @@ public struct AuthView: View {
                                 #endif
                         }
                         fieldCard {
-                            TextField("Usuario", text: $store.username)
+                            TextField("Username", text: $store.username)
                                 .autocorrectionDisabled()
                                 #if os(iOS)
                                 .textInputAutocapitalization(.never)
@@ -38,7 +38,7 @@ public struct AuthView: View {
                                 #endif
                         }
                         fieldCard {
-                            SecureField("Contraseña", text: $store.password)
+                            SecureField("Password", text: $store.password)
                                 #if os(iOS)
                                 .textContentType(.password)
                                 #endif
@@ -58,13 +58,13 @@ public struct AuthView: View {
                         if store.isLoading {
                             ProgressView().tint(DesignTokens.Palette.background)
                         } else {
-                            Text("Conectar")
+                            Text("Connect")
                         }
                     }
                     .buttonStyle(.superTVPrimary)
                     .disabled(!store.isFormValid || store.isLoading)
 
-                    Text("Introduce los datos de tu suscripción compatible (Xtream Codes). Tus credenciales se guardan solo en tu dispositivo.")
+                    Text("Enter your compatible subscription details (Xtream Codes). Your credentials are stored only on your device.")
                         .font(.caption)
                         .foregroundStyle(DesignTokens.Palette.textSecondary)
                         .multilineTextAlignment(.center)
@@ -89,7 +89,7 @@ public struct AuthView: View {
             Text("SuperTV")
                 .font(.largeTitle.bold())
                 .foregroundStyle(DesignTokens.Palette.textPrimary)
-            Text("Conecta tu proveedor")
+            Text("Connect your provider")
                 .font(.subheadline)
                 .foregroundStyle(DesignTokens.Palette.textSecondary)
         }

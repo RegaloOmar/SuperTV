@@ -15,7 +15,7 @@ public struct XtreamCodesClient: IPTVProviderProtocol {
 
     public func authenticate(_ account: IPTVAccount) async throws -> AccountStatus {
         guard let url = XtreamCodesEndpoint.playerAPI(account: account) else {
-            throw IPTVError.network(reason: "URL de host inválida.")
+            throw IPTVError.network(reason: "Invalid host URL.")
         }
         let response: AuthResponseDTO = try await get(url)
         guard let userInfo = response.userInfo, userInfo.isAuthenticated else {
@@ -32,7 +32,7 @@ public struct XtreamCodesClient: IPTVProviderProtocol {
 
     public func liveCategories(for account: IPTVAccount) async throws -> [ChannelCategory] {
         guard let url = XtreamCodesEndpoint.playerAPI(account: account, action: "get_live_categories") else {
-            throw IPTVError.network(reason: "URL de host inválida.")
+            throw IPTVError.network(reason: "Invalid host URL.")
         }
         let dtos: [CategoryDTO] = try await get(url)
         return dtos.enumerated().map { $0.element.toDomain(displayOrder: $0.offset) }
@@ -41,7 +41,7 @@ public struct XtreamCodesClient: IPTVProviderProtocol {
     public func liveStreams(for account: IPTVAccount, categoryID: String?) async throws -> [Channel] {
         let query = categoryID.map { [URLQueryItem(name: "category_id", value: $0)] } ?? []
         guard let url = XtreamCodesEndpoint.playerAPI(account: account, action: "get_live_streams", queryItems: query) else {
-            throw IPTVError.network(reason: "URL de host inválida.")
+            throw IPTVError.network(reason: "Invalid host URL.")
         }
         let dtos: [LiveStreamDTO] = try await get(url)
         return dtos.map { $0.toDomain() }
@@ -53,7 +53,7 @@ public struct XtreamCodesClient: IPTVProviderProtocol {
         do {
             let (data, response) = try await session.data(from: url)
             guard let http = response as? HTTPURLResponse else {
-                throw IPTVError.network(reason: "Respuesta no HTTP.")
+                throw IPTVError.network(reason: "Non-HTTP response.")
             }
             guard (200..<300).contains(http.statusCode) else {
                 throw IPTVError.network(reason: "HTTP \(http.statusCode).")

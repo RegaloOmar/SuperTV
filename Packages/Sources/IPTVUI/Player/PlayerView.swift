@@ -40,9 +40,9 @@ public struct PlayerView: View {
         if let errorMessage = store.errorMessage {
             StatusView(
                 systemImage: "exclamationmark.triangle.fill",
-                title: "No se pudo reproducir",
+                title: "Couldn't play",
                 message: errorMessage,
-                action: .init(title: "Reintentar") { store.send(.retryTapped) }
+                action: .init(title: "Retry") { store.send(.retryTapped) }
             )
             .background(.ultraThinMaterial)
         } else if store.isBuffering {
@@ -51,7 +51,7 @@ public struct PlayerView: View {
                     .controlSize(.large)
                     .tint(.white)
                 if case let .reconnecting(attempt) = store.playback {
-                    Text("Reconectando… (intento \(attempt))")
+                    Text("Reconnecting… (attempt \(attempt))")
                         .font(.callout)
                         .foregroundStyle(.white)
                 }

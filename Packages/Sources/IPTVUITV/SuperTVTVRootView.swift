@@ -28,7 +28,7 @@ public struct SuperTVTVRootView: View {
             state.channelList = ChannelListFeature.State(account: account)
             state.isLaunching = false
             if ProcessInfo.processInfo.arguments.contains("-demoCatalogChannels") {
-                state.channels = ChannelsFeature.State(account: account, category: ChannelCategory(id: "1", name: "Deportes"))
+                state.channels = ChannelsFeature.State(account: account, category: ChannelCategory(id: "1", name: "Sports"))
             }
         }
         #endif
@@ -106,12 +106,12 @@ struct TVSplashView: View {
 private struct DemoCatalogRepository: ChannelRepositoryProtocol {
     func categories(for account: IPTVAccount, forceRefresh: Bool) async throws -> [ChannelCategory] {
         [
-            ChannelCategory(id: "1", name: "Deportes", displayOrder: 0),
-            ChannelCategory(id: "2", name: "Noticias", displayOrder: 1),
-            ChannelCategory(id: "3", name: "Películas", displayOrder: 2),
+            ChannelCategory(id: "1", name: "Sports", displayOrder: 0),
+            ChannelCategory(id: "2", name: "News", displayOrder: 1),
+            ChannelCategory(id: "3", name: "Movies", displayOrder: 2),
             ChannelCategory(id: "4", name: "Series", displayOrder: 3),
-            ChannelCategory(id: "5", name: "Infantil", displayOrder: 4),
-            ChannelCategory(id: "6", name: "Documentales", displayOrder: 5),
+            ChannelCategory(id: "5", name: "Kids", displayOrder: 4),
+            ChannelCategory(id: "6", name: "Documentaries", displayOrder: 5),
         ]
     }
     func channels(for account: IPTVAccount, categoryID: String?, forceRefresh: Bool) async throws -> [Channel] {

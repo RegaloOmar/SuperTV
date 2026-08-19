@@ -31,9 +31,9 @@ struct TVCategoriesView: View {
                     Spacer()
                     StatusView(
                         systemImage: "wifi.exclamationmark",
-                        title: "No se pudo cargar",
+                        title: "Couldn't load",
                         message: errorMessage,
-                        action: .init(title: "Reintentar") { store.send(.refresh) }
+                        action: .init(title: "Retry") { store.send(.refresh) }
                     )
                     Spacer()
                 } else {
@@ -60,7 +60,7 @@ struct TVCategoriesView: View {
 
     private var header: some View {
         HStack {
-            Text("Categorías")
+            Text("Categories")
                 .font(.system(size: 56, weight: .bold))
                 .foregroundStyle(DesignTokens.Palette.textPrimary)
             Spacer()
@@ -69,7 +69,7 @@ struct TVCategoriesView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "gearshape")
-                    Text("Ajustes")
+                    Text("Settings")
                 }
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(DesignTokens.Palette.textPrimary)

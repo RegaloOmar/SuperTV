@@ -24,25 +24,25 @@ public struct ChannelListView: View {
             } else if let errorMessage = store.errorMessage, store.categories.isEmpty {
                 StatusView(
                     systemImage: "wifi.exclamationmark",
-                    title: "No se pudo cargar",
+                    title: "Couldn't load",
                     message: errorMessage,
-                    action: .init(title: "Reintentar") { store.send(.refresh) }
+                    action: .init(title: "Retry") { store.send(.refresh) }
                 )
             } else {
                 categoryList
             }
         }
-        .navigationTitle("Categorías")
-        .searchable(text: $store.searchText, prompt: "Buscar categoría")
+        .navigationTitle("Categories")
+        .searchable(text: $store.searchText, prompt: "Search category")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Actualizar", systemImage: "arrow.clockwise") {
+                Button("Refresh", systemImage: "arrow.clockwise") {
                     store.send(.refresh)
                 }
                 .disabled(store.isLoading)
             }
             ToolbarItem(placement: .primaryAction) {
-                Button("Ajustes", systemImage: "gearshape") {
+                Button("Settings", systemImage: "gearshape") {
                     store.send(.settingsButtonTapped)
                 }
             }
@@ -61,7 +61,7 @@ public struct ChannelListView: View {
                         CategoryRow(name: category.name)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityHint("Toca para ver los canales")
+                    .accessibilityHint("Tap to see the channels")
                 }
             }
             .padding(DesignTokens.Spacing.md)
@@ -70,8 +70,8 @@ public struct ChannelListView: View {
             if store.filteredCategories.isEmpty {
                 StatusView(
                     systemImage: "magnifyingglass",
-                    title: "Sin resultados",
-                    message: store.searchText.isEmpty ? "No hay categorías." : "Nada coincide con “\(store.searchText)”."
+                    title: "No results",
+                    message: store.searchText.isEmpty ? "No categories." : "Nothing matches “\(store.searchText)”."
                 )
             }
         }

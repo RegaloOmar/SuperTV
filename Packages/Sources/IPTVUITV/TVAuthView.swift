@@ -19,18 +19,18 @@ struct TVAuthView: View {
                 Text("SuperTV")
                     .font(.system(size: 64, weight: .bold))
                     .foregroundStyle(DesignTokens.Palette.textPrimary)
-                Text("Conecta tu proveedor")
+                Text("Connect your provider")
                     .font(.title3)
                     .foregroundStyle(DesignTokens.Palette.textSecondary)
 
                 VStack(spacing: DesignTokens.Spacing.md) {
-                    TextField("Servidor (ej. ejemplo.com:8080)", text: $store.host)
+                    TextField("Server (e.g. example.com:8080)", text: $store.host)
                         .textContentType(.URL)
                         .autocorrectionDisabled()
-                    TextField("Usuario", text: $store.username)
+                    TextField("Username", text: $store.username)
                         .textContentType(.username)
                         .autocorrectionDisabled()
-                    SecureField("Contraseña", text: $store.password)
+                    SecureField("Password", text: $store.password)
                         .textContentType(.password)
                 }
 
@@ -45,7 +45,7 @@ struct TVAuthView: View {
                     if store.isLoading {
                         ProgressView().tint(DesignTokens.Palette.background)
                     } else {
-                        Text("Conectar").padding(.horizontal, DesignTokens.Spacing.xl)
+                        Text("Connect").padding(.horizontal, DesignTokens.Spacing.xl)
                     }
                 }
                 .buttonStyle(.superTVPrimary)

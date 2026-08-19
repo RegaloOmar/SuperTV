@@ -108,6 +108,10 @@ public struct AppFeature {
 
             // MARK: Categorías (sidebar) → seleccionar categoría abre sus canales (detalle)
             case let .channelList(.delegate(.categorySelected(category, account))):
+                // Si ya se está mostrando esa categoría, no recrear el estado: en iPad
+                // el detalle está fijado con `.id(category.id)` y el `.task(id:)` no se
+                // vuelve a disparar, así que un estado nuevo quedaría vacío sin recargar.
+                guard state.channels?.category.id != category.id else { return .none }
                 state.channels = ChannelsFeature.State(account: account, category: category)
                 return .none
 

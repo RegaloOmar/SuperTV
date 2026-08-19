@@ -23,19 +23,19 @@ public struct ChannelsView: View {
             } else if let errorMessage = store.errorMessage, store.channels.isEmpty {
                 StatusView(
                     systemImage: "wifi.exclamationmark",
-                    title: "No se pudo cargar",
+                    title: "Couldn't load",
                     message: errorMessage,
-                    action: .init(title: "Reintentar") { store.send(.refresh) }
+                    action: .init(title: "Retry") { store.send(.refresh) }
                 )
             } else {
                 channelList
             }
         }
         .navigationTitle(store.category.name)
-        .searchable(text: $store.searchText, prompt: "Buscar canal")
+        .searchable(text: $store.searchText, prompt: "Search channel")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Actualizar", systemImage: "arrow.clockwise") {
+                Button("Refresh", systemImage: "arrow.clockwise") {
                     store.send(.refresh)
                 }
                 .disabled(store.isLoading)
@@ -58,7 +58,7 @@ public struct ChannelsView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityElement(children: .combine)
-                    .accessibilityHint("Toca para reproducir")
+                    .accessibilityHint("Tap to play")
                 }
             }
             .padding(DesignTokens.Spacing.md)
@@ -67,8 +67,8 @@ public struct ChannelsView: View {
             if store.filteredChannels.isEmpty {
                 StatusView(
                     systemImage: "magnifyingglass",
-                    title: "Sin resultados",
-                    message: store.searchText.isEmpty ? "No hay canales en esta categoría." : "Nada coincide con “\(store.searchText)”."
+                    title: "No results",
+                    message: store.searchText.isEmpty ? "No channels in this category." : "Nothing matches “\(store.searchText)”."
                 )
             }
         }
@@ -91,7 +91,7 @@ private struct ChannelRow: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
                 if let number = channel.channelNumber {
-                    Text("CANAL \(number)")
+                    Text("CHANNEL \(number)")
                         .font(.caption2.weight(.semibold))
                         .tracking(0.5)
                         .foregroundStyle(DesignTokens.Palette.accent)

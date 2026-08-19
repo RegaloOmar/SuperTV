@@ -19,20 +19,20 @@ public struct SettingsView: View {
 
             ScrollView {
                 VStack(spacing: DesignTokens.Spacing.lg) {
-                    section("CONEXIÓN") {
-                        InfoRow(label: "Servidor", value: store.account.host.absoluteString)
+                    section("CONNECTION") {
+                        InfoRow(label: "Server", value: store.account.host.absoluteString)
                         rowDivider
-                        InfoRow(label: "Usuario", value: store.account.username)
+                        InfoRow(label: "Username", value: store.account.username)
                     }
 
-                    section("SUSCRIPCIÓN") {
-                        InfoRow(label: "Estado", value: status.state.rawValue, valueColor: DesignTokens.Palette.accent)
+                    section("SUBSCRIPTION") {
+                        InfoRow(label: "Status", value: status.state.rawValue, valueColor: DesignTokens.Palette.accent)
                         rowDivider
-                        InfoRow(label: "Expira", value: expiresText)
+                        InfoRow(label: "Expires", value: expiresText)
                         rowDivider
-                        InfoRow(label: "Prueba", value: status.isTrial ? "Sí" : "No")
+                        InfoRow(label: "Trial", value: status.isTrial ? "Yes" : "No")
                         rowDivider
-                        InfoRow(label: "Conexiones", value: "\(status.activeConnections) / \(status.maxConnections)")
+                        InfoRow(label: "Connections", value: "\(status.activeConnections) / \(status.maxConnections)")
                     }
 
                     clearCacheButton
@@ -41,11 +41,11 @@ public struct SettingsView: View {
                 .padding(DesignTokens.Spacing.lg)
             }
         }
-        .navigationTitle("Ajustes")
+        .navigationTitle("Settings")
     }
 
     private var expiresText: String {
-        guard let expiresAt = status.expiresAt else { return "Sin límite" }
+        guard let expiresAt = status.expiresAt else { return "Unlimited" }
         return expiresAt.formatted(date: .abbreviated, time: .shortened)
     }
 
@@ -79,7 +79,7 @@ public struct SettingsView: View {
             store.send(.clearCacheTapped)
         } label: {
             HStack {
-                Text("Limpiar caché")
+                Text("Clear cache")
                     .fontWeight(.bold)
                     .foregroundStyle(DesignTokens.Palette.accent)
                 Spacer()
@@ -88,7 +88,7 @@ public struct SettingsView: View {
                 } else if store.cacheCleared {
                     Image(systemName: "checkmark")
                         .foregroundStyle(DesignTokens.Palette.accent)
-                        .accessibilityLabel("Caché limpiada")
+                        .accessibilityLabel("Cache cleared")
                 }
             }
             .padding(DesignTokens.Spacing.md)
@@ -107,7 +107,7 @@ public struct SettingsView: View {
         Button(role: .destructive) {
             store.send(.logoutTapped)
         } label: {
-            Text("Cerrar sesión")
+            Text("Log out")
                 .font(.headline)
                 .foregroundStyle(.red)
                 .frame(maxWidth: .infinity)
