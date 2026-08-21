@@ -48,4 +48,4 @@ Si esta política cambia, se actualizará esta página con una nueva fecha.
 
 ## Contacto
 
-[RELLENAR: correo de contacto del desarrollador]
+regaladomendozaomar@gmail.com
