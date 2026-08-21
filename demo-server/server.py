@@ -30,8 +30,8 @@ PORT = int(os.environ.get("PORT", "8080"))
 
 # Catálogo demo. Cada canal apunta a un HLS público y legal.
 CATEGORIES = [
-    {"category_id": "1", "category_name": "Películas (Dominio Público)"},
-    {"category_id": "2", "category_name": "Streams de Prueba"},
+    {"category_id": "1", "category_name": "Movies (Public Domain)"},
+    {"category_id": "2", "category_name": "Test Streams"},
 ]
 
 STREAMS = [

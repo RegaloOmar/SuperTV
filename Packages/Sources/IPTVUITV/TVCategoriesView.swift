@@ -51,6 +51,10 @@ struct TVCategoriesView: View {
                         .padding(.horizontal, 60)
                         .padding(.bottom, 60)
                     }
+                    // Sección de foco propia: permite bajar del header (Refresh/Settings)
+                    // a la rejilla aunque no haya una tarjeta justo debajo del botón
+                    // (p. ej. con pocas categorías y columnas vacías en la 1ª fila).
+                    .focusSection()
                 }
             }
         }
@@ -95,6 +99,9 @@ struct TVCategoriesView: View {
                 .buttonStyle(.card)
             }
         }
+        // Sección de foco de ancho completo: subir desde cualquier tarjeta (incluida
+        // la columna izquierda) alcanza los botones, aunque estén arriba a la derecha.
+        .focusSection()
         .padding(.horizontal, 60)
         .padding(.top, 40)
         .padding(.bottom, 20)
