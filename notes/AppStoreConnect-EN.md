@@ -48,7 +48,7 @@ media player,xtream,streams,player,pip,picture in picture,m3u,playback,video,tv 
 
 **Support URL / Marketing URL**
 ```
-[FILL: a public page — a simple site or your GitHub repo URL]
+https://regaloomar.github.io/SuperTV/support.html
 ```
 
 ---
@@ -64,7 +64,7 @@ How to test:
 2. Tap "Connect" → categories are listed → select one → select a channel → it plays.
 
 Demo account (review only):
-  Server:   [FILL: your Render URL, e.g. https://supertv-demo.onrender.com]
+  Server:   https://supertv-q6jy.onrender.com
   Username: demo
   Password: demo
 
@@ -85,7 +85,7 @@ developer.
 
 ## Privacy Policy URL
 ```
-[FILL: host docs/PrivacyPolicy.md at a public URL]
+https://regaloomar.github.io/SuperTV/privacy.html
 ```
 
 ## Age Rating
